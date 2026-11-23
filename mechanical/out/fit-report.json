@@ -1,0 +1,635 @@
+{
+ "adopted": "A",
+ "envelopes": {
+  "A": {
+   "envelope": "A-slim",
+   "pod": [
+    36.0,
+    19.0,
+    9.0
+   ],
+   "board": [
+    33.4,
+    16.4,
+    0.6
+   ],
+   "ok": true,
+   "problems": [],
+   "stack": {
+    "back wall": 0.9,
+    "adhesive": 0.1,
+    "cell, swollen": 4.32,
+    "gap under the board": 0.3,
+    "board": 0.6,
+    "tallest part on the outer face": 0.8,
+    "gap under the front wall": 0.2,
+    "front wall": 1.0,
+    "left over": 0.78
+   },
+   "cell_room": {
+    "length": 25.1,
+    "width": 16.6,
+    "thickness": 4.72
+   },
+   "cell": {
+    "key": "lp401525",
+    "mpn": "401525",
+    "size": [
+     25.0,
+     15.0,
+     4.0
+    ],
+    "capacity_mah": 120,
+    "spare_length": 0.1,
+    "spare_width": 1.6,
+    "spare_height": 0.78,
+    "board_to_back_wall": 4.72
+   },
+   "area": {
+    "board": 547.8,
+    "large_parts_and_keepouts": 142.8,
+    "free": 404.9,
+    "small_parts": 56,
+    "small_parts_need": 30.4,
+    "share_of_free": 0.07
+   },
+   "mic_distance": 30.7,
+   "mass": {
+    "shell_g": 2.46,
+    "board_g": 1.11,
+    "cell_g": 2.76,
+    "total_g_estimate": 6.3
+   },
+   "placed": [
+    {
+     "name": "antenna keep-out",
+     "part": null,
+     "face": "both",
+     "x": 0.0,
+     "y": 0.0,
+     "w": 3.2,
+     "h": 6.0
+    },
+    {
+     "name": "antenna",
+     "part": "antenna",
+     "face": "top",
+     "x": 0.8,
+     "y": 0.5,
+     "w": 1.6,
+     "h": 0.8
+    },
+    {
+     "name": "microphone A",
+     "part": "mic",
+     "face": "bottom",
+     "x": 0.25,
+     "y": 6.45,
+     "w": 2.65,
+     "h": 3.5
+    },
+    {
+     "name": "microphone A gasket",
+     "part": null,
+     "face": "top",
+     "x": 0.07,
+     "y": 6.7,
+     "w": 3.0,
+     "h": 3.0
+    },
+    {
+     "name": "microphone B",
+     "part": "mic",
+     "face": "bottom",
+     "x": 30.5,
+     "y": 1.0,
+     "w": 2.65,
+     "h": 3.5
+    },
+    {
+     "name": "microphone B gasket",
+     "part": null,
+     "face": "top",
+     "x": 30.32,
+     "y": 1.25,
+     "w": 3.0,
+     "h": 3.0
+    },
+    {
+     "name": "contact charge +",
+     "part": "contact",
+     "face": "bottom",
+     "x": 30.8,
+     "y": 5.25,
+     "w": 2.0,
+     "h": 1.5
+    },
+    {
+     "name": "contact charge -",
+     "part": "contact",
+     "face": "bottom",
+     "x": 30.8,
+     "y": 7.75,
+     "w": 2.0,
+     "h": 1.5
+    },
+    {
+     "name": "contact SWDIO",
+     "part": "contact",
+     "face": "bottom",
+     "x": 30.8,
+     "y": 10.25,
+     "w": 2.0,
+     "h": 1.5
+    },
+    {
+     "name": "contact SWDCLK",
+     "part": "contact",
+     "face": "bottom",
+     "x": 30.8,
+     "y": 12.75,
+     "w": 2.0,
+     "h": 1.5
+    },
+    {
+     "name": "light",
+     "part": "led",
+     "face": "top",
+     "x": 31.3,
+     "y": 14.6,
+     "w": 1.0,
+     "h": 0.6
+    },
+    {
+     "name": "button",
+     "part": "button",
+     "face": "top",
+     "x": 15.4,
+     "y": 7.4,
+     "w": 2.6,
+     "h": 1.6
+    },
+    {
+     "name": "button cap",
+     "part": null,
+     "face": "top",
+     "x": 14.2,
+     "y": 5.7,
+     "w": 5.0,
+     "h": 5.0
+    },
+    {
+     "name": "microcontroller",
+     "part": "soc",
+     "face": "top",
+     "x": 5.17,
+     "y": 1.57,
+     "w": 3.05,
+     "h": 2.85
+    },
+    {
+     "name": "32 MHz crystal",
+     "part": "xtal32m",
+     "face": "top",
+     "x": 5.9,
+     "y": 5.4,
+     "w": 1.6,
+     "h": 1.2
+    },
+    {
+     "name": "32.768 kHz crystal",
+     "part": "xtal32k",
+     "face": "top",
+     "x": 9.7,
+     "y": 2.4,
+     "w": 2.0,
+     "h": 1.2
+    },
+    {
+     "name": "flash",
+     "part": "flash",
+     "face": "top",
+     "x": 4.2,
+     "y": 9.9,
+     "w": 8.0,
+     "h": 6.0
+    },
+    {
+     "name": "power chip",
+     "part": "pmic",
+     "face": "top",
+     "x": 24.36,
+     "y": 2.01,
+     "w": 3.68,
+     "h": 2.98
+    },
+    {
+     "name": "buck inductor",
+     "part": "inductor",
+     "face": "top",
+     "x": 25.4,
+     "y": 6.1,
+     "w": 1.6,
+     "h": 0.8
+    },
+    {
+     "name": "cell protection",
+     "part": "protector",
+     "face": "top",
+     "x": 26.5,
+     "y": 13.2,
+     "w": 1.4,
+     "h": 1.4
+    },
+    {
+     "name": "cell tab slot",
+     "part": null,
+     "face": "both",
+     "x": 28.6,
+     "y": 6.2,
+     "w": 1.2,
+     "h": 4.0
+    }
+   ]
+  },
+  "B": {
+   "envelope": "B-roomy",
+   "pod": [
+    38.0,
+    22.0,
+    10.0
+   ],
+   "board": [
+    35.4,
+    19.4,
+    0.6
+   ],
+   "ok": true,
+   "problems": [],
+   "stack": {
+    "back wall": 0.9,
+    "adhesive": 0.1,
+    "cell, swollen": 5.4,
+    "gap under the board": 0.3,
+    "board": 0.6,
+    "tallest part on the outer face": 0.8,
+    "gap under the front wall": 0.2,
+    "front wall": 1.0,
+    "left over": 0.7
+   },
+   "cell_room": {
+    "length": 27.1,
+    "width": 19.6,
+    "thickness": 5.65
+   },
+   "cell": {
+    "key": "lp501725",
+    "mpn": "501725",
+    "size": [
+     25.0,
+     17.0,
+     5.0
+    ],
+    "capacity_mah": 170,
+    "spare_length": 2.1,
+    "spare_width": 2.6,
+    "spare_height": 0.7,
+    "board_to_back_wall": 5.8
+   },
+   "area": {
+    "board": 686.8,
+    "large_parts_and_keepouts": 142.8,
+    "free": 543.9,
+    "small_parts": 56,
+    "small_parts_need": 30.4,
+    "share_of_free": 0.06
+   },
+   "mic_distance": 33.0,
+   "mass": {
+    "shell_g": 3.03,
+    "board_g": 1.26,
+    "cell_g": 3.91,
+    "total_g_estimate": 8.2
+   },
+   "placed": [
+    {
+     "name": "antenna keep-out",
+     "part": null,
+     "face": "both",
+     "x": 0.0,
+     "y": 0.0,
+     "w": 3.2,
+     "h": 6.0
+    },
+    {
+     "name": "antenna",
+     "part": "antenna",
+     "face": "top",
+     "x": 0.8,
+     "y": 0.5,
+     "w": 1.6,
+     "h": 0.8
+    },
+    {
+     "name": "microphone A",
+     "part": "mic",
+     "face": "bottom",
+     "x": 0.25,
+     "y": 7.95,
+     "w": 2.65,
+     "h": 3.5
+    },
+    {
+     "name": "microphone A gasket",
+     "part": null,
+     "face": "top",
+     "x": 0.07,
+     "y": 8.2,
+     "w": 3.0,
+     "h": 3.0
+    },
+    {
+     "name": "microphone B",
+     "part": "mic",
+     "face": "bottom",
+     "x": 32.5,
+     "y": 1.0,
+     "w": 2.65,
+     "h": 3.5
+    },
+    {
+     "name": "microphone B gasket",
+     "part": null,
+     "face": "top",
+     "x": 32.32,
+     "y": 1.25,
+     "w": 3.0,
+     "h": 3.0
+    },
+    {
+     "name": "contact charge +",
+     "part": "contact",
+     "face": "bottom",
+     "x": 32.8,
+     "y": 5.25,
+     "w": 2.0,
+     "h": 1.5
+    },
+    {
+     "name": "contact charge -",
+     "part": "contact",
+     "face": "bottom",
+     "x": 32.8,
+     "y": 7.75,
+     "w": 2.0,
+     "h": 1.5
+    },
+    {
+     "name": "contact SWDIO",
+     "part": "contact",
+     "face": "bottom",
+     "x": 32.8,
+     "y": 10.25,
+     "w": 2.0,
+     "h": 1.5
+    },
+    {
+     "name": "contact SWDCLK",
+     "part": "contact",
+     "face": "bottom",
+     "x": 32.8,
+     "y": 12.75,
+     "w": 2.0,
+     "h": 1.5
+    },
+    {
+     "name": "light",
+     "part": "led",
+     "face": "top",
+     "x": 33.3,
+     "y": 17.6,
+     "w": 1.0,
+     "h": 0.6
+    },
+    {
+     "name": "button",
+     "part": "button",
+     "face": "top",
+     "x": 16.4,
+     "y": 8.9,
+     "w": 2.6,
+     "h": 1.6
+    },
+    {
+     "name": "button cap",
+     "part": null,
+     "face": "top",
+     "x": 15.2,
+     "y": 7.2,
+     "w": 5.0,
+     "h": 5.0
+    },
+    {
+     "name": "microcontroller",
+     "part": "soc",
+     "face": "top",
+     "x": 5.17,
+     "y": 1.57,
+     "w": 3.05,
+     "h": 2.85
+    },
+    {
+     "name": "32 MHz crystal",
+     "part": "xtal32m",
+     "face": "top",
+     "x": 5.9,
+     "y": 5.4,
+     "w": 1.6,
+     "h": 1.2
+    },
+    {
+     "name": "32.768 kHz crystal",
+     "part": "xtal32k",
+     "face": "top",
+     "x": 9.7,
+     "y": 2.4,
+     "w": 2.0,
+     "h": 1.2
+    },
+    {
+     "name": "flash",
+     "part": "flash",
+     "face": "top",
+     "x": 4.2,
+     "y": 12.9,
+     "w": 8.0,
+     "h": 6.0
+    },
+    {
+     "name": "power chip",
+     "part": "pmic",
+     "face": "top",
+     "x": 26.36,
+     "y": 2.01,
+     "w": 3.68,
+     "h": 2.98
+    },
+    {
+     "name": "buck inductor",
+     "part": "inductor",
+     "face": "top",
+     "x": 27.4,
+     "y": 6.1,
+     "w": 1.6,
+     "h": 0.8
+    },
+    {
+     "name": "cell protection",
+     "part": "protector",
+     "face": "top",
+     "x": 28.5,
+     "y": 16.2,
+     "w": 1.4,
+     "h": 1.4
+    },
+    {
+     "name": "cell tab slot",
+     "part": null,
+     "face": "both",
+     "x": 30.6,
+     "y": 7.7,
+     "w": 1.2,
+     "h": 4.0
+    }
+   ]
+  }
+ },
+ "size_sweep": [
+  {
+   "pod": [
+    36.0,
+    19.0,
+    8.5
+   ],
+   "room": {
+    "length": 25.1,
+    "width": 16.6,
+    "thickness": 4.26
+   },
+   "best_cell": "lp401525",
+   "capacity_mah": 120
+  },
+  {
+   "pod": [
+    36.0,
+    19.0,
+    9.0
+   ],
+   "room": {
+    "length": 25.1,
+    "width": 16.6,
+    "thickness": 4.72
+   },
+   "best_cell": "lp401525",
+   "capacity_mah": 120
+  },
+  {
+   "pod": [
+    36.0,
+    19.0,
+    10.0
+   ],
+   "room": {
+    "length": 25.1,
+    "width": 16.6,
+    "thickness": 5.65
+   },
+   "best_cell": "lp401525",
+   "capacity_mah": 120
+  },
+  {
+   "pod": [
+    36.0,
+    20.0,
+    8.5
+   ],
+   "room": {
+    "length": 25.1,
+    "width": 17.6,
+    "thickness": 4.26
+   },
+   "best_cell": "lp401725",
+   "capacity_mah": 135
+  },
+  {
+   "pod": [
+    36.0,
+    20.0,
+    9.0
+   ],
+   "room": {
+    "length": 25.1,
+    "width": 17.6,
+    "thickness": 4.72
+   },
+   "best_cell": "lp401725",
+   "capacity_mah": 135
+  },
+  {
+   "pod": [
+    36.0,
+    20.0,
+    10.0
+   ],
+   "room": {
+    "length": 25.1,
+    "width": 17.6,
+    "thickness": 5.65
+   },
+   "best_cell": "lp501725",
+   "capacity_mah": 170
+  },
+  {
+   "pod": [
+    36.0,
+    22.0,
+    8.5
+   ],
+   "room": {
+    "length": 25.1,
+    "width": 19.6,
+    "thickness": 4.26
+   },
+   "best_cell": "lp401725",
+   "capacity_mah": 135
+  },
+  {
+   "pod": [
+    36.0,
+    22.0,
+    9.0
+   ],
+   "room": {
+    "length": 25.1,
+    "width": 19.6,
+    "thickness": 4.72
+   },
+   "best_cell": "lp401725",
+   "capacity_mah": 135
+  },
+  {
+   "pod": [
+    36.0,
+    22.0,
+    10.0
+   ],
+   "room": {
+    "length": 25.1,
+    "width": 19.6,
+    "thickness": 5.65
+   },
+   "best_cell": "lp501725",
+   "capacity_mah": 170
+  }
+ ]
+}
