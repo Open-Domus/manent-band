@@ -81,8 +81,8 @@ One logic rail at 1.8 V, as on the ring: the microphones accept nothing higher.
 
 | Block | Part | Size (mm) | Why | Confidence |
 | --- | --- | --- | --- | --- |
-| Microcontroller | Nordic nRF54L15, CSP47 | 2.45 x 2.25 x 0.42 | The firmware targets it; its PDM clock suits the microphone | pinout verified for the ring |
-| Power | Nordic nPM1304, CSP35 | 3.08 x 2.38 x 0.46 | Charges at up to 100 mA, enough for a 120-170 mAh cell; 1.8 V buck; two load switches; ship mode | pinout verified for the ring; some terminations not |
+| Microcontroller | Nordic nRF54L15, QFN48 | 6 x 6 x 0.85 | The firmware targets it; its PDM clock suits the microphone | pin table read once from the product specification |
+| Power | Nordic nPM1304, QFN32 | 5 x 5 x 0.85 | Charges at 4 to 100 mA, enough for a 120-170 mAh cell; 1.8 V buck; two load switches; ship mode at 370 nA | pin table read once from the product specification; some terminations not |
 | Flash | Winbond W25Q512NW, WSON-8 | 8 x 6 x 0.8 | 512 Mbit holds about 7 h of speech not yet uploaded | from memory: part number, package and height to confirm |
 | Microphones | 2 x TDK T5838 | 3.5 x 2.65 x 0.98 | Wake-on-sound at 20-137 uA; already planned by the firmware | verified |
 | Button | Panasonic EVP-BB, 1.6 N | 2.6 x 1.6 x 0.53 | Sealed to IP67; pressed through a flexible cap | datasheet from a distributor |
@@ -93,14 +93,21 @@ One logic rail at 1.8 V, as on the ring: the microphones accept nothing higher.
 
 The full list with part numbers is `electrical/out/bom.csv`.
 
-### What is taken from the ring, and what that costs
+### QFN packages, not the ring's chip-scale ones
 
-The power chip, the microcontroller and their surrounding parts are copied from the ring,
-in the same chip-scale packages, because those pin tables have been checked ball by ball
-and the firmware is the same. The price is the ring's board technology: 0.3 mm pitch needs
-microvias and an assembler with X-ray inspection, in a pod that has about three times the board area.
-Both chips exist in QFN packages that an ordinary four-layer board can carry. Moving to
-them needs their pin tables read with the same care; it is the first open question.
+The ring has to use 0.3 mm pitch chip-scale packages, with microvias and X-ray inspection.
+The pod has about three times the board area, so both Nordic chips are the QFN versions:
+0.4 and 0.5 mm pitch with the pins on the edge, which an ordinary four-layer board with
+through vias can carry and an ordinary assembler can place. Resistors and capacitors are
+0402 where the reference does not ask for 0201.
+
+What this rests on: the two pin tables were read on 2026-11-23 from Nordic's product
+specifications as page text, once (`parts/pins`). The clock-capable pins come out the same
+as in the ring's table, which was checked ball by ball. The QFN48 reference schematic is a
+picture: its values and part numbers were read, where each one connects was not, so the
+supply filtering and the antenna matching follow the ring's circuit with the QFN values.
+Each such part says so in the bill of materials. Before a board is ordered, the tables and
+the reference circuit must be checked against Nordic's reference layout files.
 
 ### Microcontroller pins
 
@@ -114,7 +121,7 @@ them needs their pin tables read with the same care; it is the first open questi
 | Power chip clock, data, interrupt | P0.03, P0.02, P0.01 | clock on a clock pin; port 0 can wake the chip |
 | Button | P0.00 | port 0 can wake the chip |
 | Bright light | P0.04 | |
-| Test serial port | P1.14, P1.15 | test pads on the board |
+| Test serial port | P1.11, P1.12 | test pads on the board; this package has no P1.15 |
 | 32.768 kHz crystal | P1.00, P1.01 | fitted |
 
 `electrical/gen/checks.py` enforces these rules on every build.
@@ -148,8 +155,8 @@ them needs their pin tables read with the same care; it is the first open questi
   into a pocket in a silicone strap or into a clip. Material and how the shells are joined
   are open.
 - From the wrist outwards: back shell, cell, board, parts, front shell. The board is
-  33.4 x 16.4 mm, 0.6 thick, with every part except the microphones and the spring contacts
-  on its outer face.
+  33.4 x 16.4 mm, 0.6 thick, with every part on its outer face except the microphones, the
+  spring contacts and the pads for the cell tabs.
 - The microphones hang under the board, one at each end, each with a hole through the
   board, a gasket between board and front shell, and a hole in the shell behind a membrane.
 - The cell lies between the two microphones. That limits it to 25 mm in a 36 mm pod.
@@ -159,9 +166,37 @@ them needs their pin tables read with the same care; it is the first open questi
   copper under it.
 
 Whether it all fits is in [space-budget.md](space-budget.md). In short: the 36 x 19 x 9 pod
-holds a cell of about 120 mAh with 0.8 mm of height to spare; the 38 x 22 x 10 pod that
+holds a cell of about 120 mAh with 0.6 mm of height to spare; the 38 x 22 x 10 pod that
 `mnemo-band` asks for holds about 170 mAh. The slim one is adopted, as a draft, because on
 paper it already reaches the five days.
+
+## Board
+
+`electrical/kicad/band.kicad_pcb`: four copper layers, 33.4 x 16.4 mm with rounded corners,
+seen from outside the wrist. Top copper faces outwards, bottom copper faces the cell, the
+first inner layer is a ground plane with none of it under the antenna corner.
+
+What is done:
+
+- Every part of the schematic has a footprint and a place. The parts the pod decides
+  (chips, microphones, button, light, antenna, contacts, test pads) are where the fit
+  model puts them. The rest are placed by a script, each as near as it can get to the pads
+  it connects to, 0.25 mm between land patterns and 0.4 mm from the board edge.
+- Every pad carries its net. KiCad's check finds no difference between board and schematic
+  and no rule violation in the placement.
+- The rules in the project file are an ordinary fabricator's: 0.1 mm track and gap,
+  0.45 mm vias with a 0.2 mm hole. They are an assumption, not a quote.
+- Footprints are in `electrical/kicad/band.pretty`: KiCad's stock patterns for the QFN,
+  the flash, crystals and chip parts; the microphone, switch and protector as drawn for the
+  ring; placeholders for the antenna, the spring contacts and the cell tabs.
+
+What is not done: **no track is routed.** All 165 connections are still open and the
+ground plane is not poured. The placement is a machine's first arrangement: nobody has
+looked at whether the supply loops, the crystal and the antenna feed are well laid out.
+The stock QFN patterns have not been compared with Nordic's drawings; the power chip's
+exposed pad is 3.5 mm and the stock pattern used is 3.45.
+
+Courtyard checks are switched off: spacing is enforced by the placer instead.
 
 ## Power
 

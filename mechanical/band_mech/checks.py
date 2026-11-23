@@ -17,7 +17,7 @@ def circuit_bodies() -> list[str]:
 
 def top_height(parts, placed) -> float:
     tall = [parts["parts"][pl.part]["size"][2] for pl in placed if pl.part and pl.face == "top"]
-    return max(tall + [parts["parts"]["passive0402"]["size"][2]])
+    return max(tall + [parts["parts"][k]["size"][2] for k in S.SMALL])
 
 
 def cell_room(p: PodParams, parts) -> dict:
@@ -54,6 +54,8 @@ def envelope_report(key: str, p: PodParams | None = None) -> dict:
                      if a.overlaps(b) and a.part and b.part]
     keepouts = [k for k in placed if k.part is None]
     owners = {"antenna keep-out": {"antenna"}, "button cap": {"button"}}
+    hidden = {"microphone A gasket": {"microphone A"}, "microphone B gasket": {"microphone B"}}
+    owners.update(hidden)
     for k in keepouts:
         problems += [f"{a.name} is inside {k.name}" for a in placed
                      if a.part and a.overlaps(k) and a.name not in owners.get(k.name, set())]
@@ -113,7 +115,7 @@ def envelope_report(key: str, p: PodParams | None = None) -> dict:
         "mass": {"shell_g": round(shell_g, 2), "board_g": round(board_g, 2), "cell_g": round(cell_g, 2),
                  "total_g_estimate": round(shell_g + board_g + cell_g, 1)},
         "placed": [{"name": pl.name, "part": pl.part, "face": pl.face, "x": round(pl.x, 2), "y": round(pl.y, 2),
-                    "w": round(pl.w, 2), "h": round(pl.h, 2)} for pl in placed],
+                    "w": round(pl.w, 2), "h": round(pl.h, 2), "rot": pl.rot} for pl in placed],
     }
 
 

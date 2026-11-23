@@ -12,10 +12,10 @@ are trade size codes with estimated capacities, not a supplier's drawing.
 - The microphones are bottom-port parts: they hang under the board, one at each end, with their hole
   through it. The cell stops short of both ends, and the same two zones hold the spring contacts.
 - The two microphones are at least 20 apart.
-- Every large part has a place on the board and none overlaps another or a keep-out (antenna corner,
-  button cap, microphone gaskets, cell tab slot). The fine-pitch chips keep 0.3 clear around them.
-- Small parts are counted by area, each with 0.15 of spacing, and may take at most 50% of the
-  free board. This checks that the parts have room; it does not check that the tracks can be routed.
+- Every part the pod decides has a place on the board and none overlaps another or a keep-out (antenna
+  corner, button cap, microphone gaskets). The two QFN chips keep 0.3 clear around them.
+- The other parts are counted here by area, each with 0.15 of spacing, and may take at most 50% of the
+  free board. Their actual places are in the board file; nothing here checks that the tracks can be routed.
 
 ## Envelope A-slim (adopted): 36.0 x 19.0 x 9.0
 
@@ -28,15 +28,15 @@ are trade size codes with estimated capacities, not a supplier's drawing.
 | cell, swollen | 4.32 |
 | gap under the board | 0.3 |
 | board | 0.6 |
-| tallest part on the outer face | 0.8 |
+| tallest part on the outer face | 1.0 |
 | gap under the front wall | 0.2 |
 | front wall | 1.0 |
-| left over | 0.78 |
+| left over | 0.58 |
 
-- **Room for the cell**: 25.1 x 16.6 x 4.72 (thickness before swelling).
-- **Cell**: 401525, 25.0 x 15.0 x 4.0, about 120 mAh. Spare: 0.1 in length, 1.6 in width, 0.78 in height.
+- **Room for the cell**: 25.1 x 16.6 x 4.54 (thickness before swelling).
+- **Cell**: 401525, 25.0 x 15.0 x 4.0, about 120 mAh. Spare: 0.1 in length, 1.6 in width, 0.58 in height.
 - **Under the board**: 4.72 to the back wall, which is the height the spring contacts must span.
-- **Board**: 33.4 x 16.4, 547.8 mm2. Large parts and keep-outs take 142.8; the 56 small parts need 30.4, 7% of what is free.
+- **Board**: 33.4 x 16.4, 547.8 mm2. Large parts and keep-outs take 192.7; the 52 small parts need 45.5, 13% of what is free.
 - **Microphones**: 30.7 apart.
 - **Mass** (estimate): shell 2.46 g, board 1.11 g, cell 2.76 g, about 6.3 g without strap.
 - Drawings: [board from outside](../mechanical/out/plan-A.svg), [section](../mechanical/out/section-A.svg).
@@ -52,15 +52,15 @@ are trade size codes with estimated capacities, not a supplier's drawing.
 | cell, swollen | 5.4 |
 | gap under the board | 0.3 |
 | board | 0.6 |
-| tallest part on the outer face | 0.8 |
+| tallest part on the outer face | 1.0 |
 | gap under the front wall | 0.2 |
 | front wall | 1.0 |
-| left over | 0.7 |
+| left over | 0.5 |
 
-- **Room for the cell**: 27.1 x 19.6 x 5.65 (thickness before swelling).
-- **Cell**: 501725, 25.0 x 17.0 x 5.0, about 170 mAh. Spare: 2.1 in length, 2.6 in width, 0.7 in height.
+- **Room for the cell**: 27.1 x 19.6 x 5.46 (thickness before swelling).
+- **Cell**: 501725, 25.0 x 17.0 x 5.0, about 170 mAh. Spare: 2.1 in length, 2.6 in width, 0.5 in height.
 - **Under the board**: 5.8 to the back wall, which is the height the spring contacts must span.
-- **Board**: 35.4 x 19.4, 686.8 mm2. Large parts and keep-outs take 142.8; the 56 small parts need 30.4, 6% of what is free.
+- **Board**: 35.4 x 19.4, 686.8 mm2. Large parts and keep-outs take 192.7; the 52 small parts need 45.5, 9% of what is free.
 - **Microphones**: 33.0 apart.
 - **Mass** (estimate): shell 3.03 g, board 1.26 g, cell 3.91 g, about 8.2 g without strap.
 - Drawings: [board from outside](../mechanical/out/plan-B.svg), [section](../mechanical/out/section-B.svg).
@@ -71,15 +71,15 @@ Pod 36.0 long, as envelope A. The cell is the best in `parts/parts.yaml` that fi
 
 | Width | Height | Room for the cell | Best cell | Capacity |
 | --- | --- | --- | --- | --- |
-| 19.0 | 8.5 | 25.1 x 16.6 x 4.26 | lp401525 | 120 mAh |
-| 19.0 | 9.0 | 25.1 x 16.6 x 4.72 | lp401525 | 120 mAh |
-| 19.0 | 10.0 | 25.1 x 16.6 x 5.65 | lp401525 | 120 mAh |
-| 20.0 | 8.5 | 25.1 x 17.6 x 4.26 | lp401725 | 135 mAh |
-| 20.0 | 9.0 | 25.1 x 17.6 x 4.72 | lp401725 | 135 mAh |
-| 20.0 | 10.0 | 25.1 x 17.6 x 5.65 | lp501725 | 170 mAh |
-| 22.0 | 8.5 | 25.1 x 19.6 x 4.26 | lp401725 | 135 mAh |
-| 22.0 | 9.0 | 25.1 x 19.6 x 4.72 | lp401725 | 135 mAh |
-| 22.0 | 10.0 | 25.1 x 19.6 x 5.65 | lp501725 | 170 mAh |
+| 19.0 | 8.5 | 25.1 x 16.6 x 4.07 | lp401525 | 120 mAh |
+| 19.0 | 9.0 | 25.1 x 16.6 x 4.54 | lp401525 | 120 mAh |
+| 19.0 | 10.0 | 25.1 x 16.6 x 5.46 | lp401525 | 120 mAh |
+| 20.0 | 8.5 | 25.1 x 17.6 x 4.07 | lp401725 | 135 mAh |
+| 20.0 | 9.0 | 25.1 x 17.6 x 4.54 | lp401725 | 135 mAh |
+| 20.0 | 10.0 | 25.1 x 17.6 x 5.46 | lp501725 | 170 mAh |
+| 22.0 | 8.5 | 25.1 x 19.6 x 4.07 | lp401725 | 135 mAh |
+| 22.0 | 9.0 | 25.1 x 19.6 x 4.54 | lp401725 | 135 mAh |
+| 22.0 | 10.0 | 25.1 x 19.6 x 5.46 | lp501725 | 170 mAh |
 
 Length adds room one for one: each millimetre of pod is a millimetre of cell, about 5 mAh at this
 width and thickness. The list has no cell longer than 25 that is narrow enough, so the table does not show it.

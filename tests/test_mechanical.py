@@ -40,7 +40,7 @@ def test_every_part_of_the_circuit_is_in_the_model(reports):
     bodies = circuit_bodies()
     large = sorted(b for b in bodies if b not in S.SMALL)
     placed = sorted(pl["part"] for pl in reports[ADOPTED]["placed"] if pl["part"])
-    assert placed == large and len(large) >= 16
+    assert placed == large and len(large) >= 19
     assert reports[ADOPTED]["area"]["small_parts"] == len(bodies) - len(large) > 40
 
 

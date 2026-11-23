@@ -46,5 +46,63 @@ def test_muting_cuts_both_microphones_with_one_switch():
     assert len([c for c in comps if c.value == "T5838"]) == 2
 
 
+def test_both_nordic_chips_are_the_qfn_versions():
+    fps = {c.value: c.fields["Footprint"] for c in build() if c.value in ("nRF54L15", "nPM1304")}
+    assert "QFN-48" in fps["nRF54L15"] and "QFN-32" in fps["nPM1304"]
+
+
+def test_board_has_every_part_placed_without_rule_violations():
+    import json
+    drc = NETLIST.with_name("drc.json")
+    if not drc.exists():
+        pytest.skip("run `make board` first")
+    report = json.loads(drc.read_text())
+    assert report["violations"] == []
+    assert report["schematic_parity"] == []       # same parts, footprints and nets as the schematic
+    # The board is placed, not routed: every connection is still open.
+    assert len(report["unconnected_items"]) > 100
+
+
+def test_kicad_put_every_pad_where_the_placer_assumed():
+    import json
+    board, pads = NETLIST.with_name("board.json"), NETLIST.with_name("pads.json")
+    if not (board.exists() and pads.exists()):
+        pytest.skip("run `make board` first")
+    from gen.board import pad_positions
+    real = {}
+    for ref, num, x, y, net in json.loads(pads.read_text()):
+        real.setdefault((ref, num), []).append((x, y, net))
+    checked = 0
+    for part in json.loads(board.read_text())["parts"]:
+        for num, points in pad_positions(part["footprint"], part["x"], part["y"], part["rot"], part["side"]).items():
+            for x, y in points:
+                assert min(abs(x - a) + abs(y - b) for a, b, _ in real[(part["ref"], num)]) < 0.01, (part["ref"], num)
+                checked += 1
+            assert all(net == part["nets"][num] for _, _, net in real[(part["ref"], num)]), (part["ref"], num)
+    assert checked > 200
+
+
+def test_placed_parts_stay_close_to_what_they_connect_to():
+    import json
+    path = NETLIST.with_name("board.json")
+    if not path.exists():
+        pytest.skip("run `make board` first")
+    from gen.board import pad_positions
+    data = json.loads(path.read_text())
+    pads = {}
+    for part in data["parts"]:
+        for num, points in pad_positions(part["footprint"], part["x"], part["y"], part["rot"], part["side"]).items():
+            pads.setdefault(part["nets"].get(num), []).extend((x, y, part["ref"]) for x, y in points)
+    # Every decoupling capacitor of the microcontroller within 3 mm of a supply pin of it.
+    soc = next(p["ref"] for p in data["parts"] if p["value"] == "nRF54L15")
+    caps = [p["ref"] for p in data["parts"] if p["value"] == "100nF" and "/" + p["path"].split("/")[1] ==
+            "/" + next(q for q in data["parts"] if q["ref"] == soc)["path"].split("/")[1]]
+    assert len(caps) == 4
+    vdd = [(x, y) for x, y, ref in pads["V1V8"] if ref == soc]
+    for cap in caps:
+        own = [(x, y) for x, y, ref in pads["V1V8"] if ref == cap]
+        assert min(((x - a) ** 2 + (y - b) ** 2) ** 0.5 for x, y in own for a, b in vdd) < 3.0, cap
+
+
 def test_no_vibration_motor():
     assert not any("haptic" in c.value.lower() or "motor" in c.value.lower() for c in build())

@@ -50,8 +50,8 @@ def lint() -> list[str]:
                 if p.etype == "power_in" and net not in ("GND", "CELL_N") and net not in with_cap:
                     out.append(f"{c.ref} pin {p.name} ({net}) has no decoupling capacitor")
 
-    # Microcontroller pin rules, from parts/pins/nrf54l15_csp47.yaml.
-    pins = yaml.safe_load((ROOT / "parts" / "pins" / "nrf54l15_csp47.yaml").read_text())["pins"]
+    # Microcontroller pin rules, from parts/pins/nrf54l15_qfn48.yaml.
+    pins = yaml.safe_load((ROOT / "parts" / "pins" / "nrf54l15_qfn48.yaml").read_text())["pins"]
     info = {v["name"]: v for v in pins.values()}
     where = {net: pin.split("/")[0] for pin, net in SOC_NETS.items()}
     for net in CLOCK_NETS:
@@ -74,8 +74,15 @@ def lint() -> list[str]:
     out += [f"{n} is on {where[n]}: port 2 cannot wake the chip" for n in WAKE_NETS if where[n].startswith("P2")]
     soc = next(c for c in comps if c.value == "nRF54L15")
     sym_pins = {p.number: p.name.split("/")[0] for p in soc.sym.pins}
-    out += [f"SoC symbol pin {n} is {sym_pins.get(n)}, the pin table says {v['name']}"
-            for n, v in pins.items() if sym_pins.get(n) != v["name"]]
+    out += [f"SoC symbol pin {n} is {sym_pins.get(str(n))}, the pin table says {v['name']}"
+            for n, v in pins.items() if sym_pins.get(str(n)) != v["name"]]
+    if soc.nets["33"] != soc.nets["43"]:
+        out.append("DECRF must be connected to DECA")
+    pm_pins = yaml.safe_load((ROOT / "parts" / "pins" / "npm1304_qfn32.yaml").read_text())["pins"]
+    pmic = next(c for c in comps if c.value == "nPM1304")
+    pm_sym = {p.number: p.name for p in pmic.sym.pins}
+    out += [f"power chip symbol pin {n} is {pm_sym.get(str(n))}, the pin table says {v['name']}"
+            for n, v in pm_pins.items() if pm_sym.get(str(n)) != v["name"]]
 
     # Everything to buy names a part or says it is still to choose.
     out += [f"{c.ref} has no package" for c in comps if not c.sym.virtual and c.sym.name != "PAD"

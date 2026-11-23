@@ -8,18 +8,18 @@ parts:
   soc:
     function: BLE system-on-chip
     manufacturer: Nordic Semiconductor
-    mpn: nRF54L15-CAAA
-    package: WLCSP-47, 0.3 mm pitch
-    size: [2.45, 2.25, 0.42]
-    status: verified
-    url: https://docs.nordicsemi.com/r/bundle/ps_nrf54l15/page/keyfeatures_html5.html
+    mpn: nRF54L15-QFAA
+    package: QFN-48, 6 x 6 mm, 0.4 mm pitch
+    size: [6.0, 6.0, 0.85]
+    status: secondary        # dimension table read once as page text; see parts/pins
+    url: https://docs.nordicsemi.com/r/bundle/ps_nrf54l15/page/chapters/mec_spec.html
   pmic:
     function: Charger, 1.8 V buck, load switches, ship mode
     manufacturer: Nordic Semiconductor
-    mpn: nPM1304-CAAA
-    package: WLCSP-35
-    size: [3.08, 2.38, 0.46]
-    status: verified
+    mpn: nPM1304-QEAA
+    package: QFN-32, 5 x 5 mm, 0.5 mm pitch
+    size: [5.0, 5.0, 0.85]
+    status: secondary        # dimension table read once as page text; see parts/pins
     url: https://docs.nordicsemi.com/r/bundle/ps_npm1304/page/product_overview.html
   flash:
     function: 512 Mbit 1.8 V SPI NOR flash
@@ -56,10 +56,10 @@ parts:
   xtal32m:
     function: 32 MHz crystal
     manufacturer: Kyocera
-    mpn: CX1612DB32000D0WZRC3
-    package: "1612"
-    size: [1.6, 1.2, 0.35]
-    status: secondary        # part from Nordic's reference list; height not checked
+    mpn: to choose
+    package: "2016"
+    size: [2.0, 1.6, 0.5]
+    status: unverified       # package from Nordic's QFN48 reference; part and height not chosen
     url: ""
   xtal32k:
     function: 32.768 kHz crystal
@@ -72,9 +72,9 @@ parts:
   inductor:
     function: Buck inductor, 2.2 uH
     manufacturer: Murata
-    mpn: DFE18SAN2R2 class
-    package: "0603 (1608 metric)"
-    size: [1.6, 0.8, 0.8]
+    mpn: to choose
+    package: "0806 (2016 metric)"
+    size: [2.0, 1.6, 1.0]
     status: unverified
     url: ""
   protector:
@@ -109,8 +109,32 @@ parts:
     size: [1.0, 0.6, 0.4]
     status: unverified
     url: ""
+  testpad:
+    function: Test pad, bare copper
+    manufacturer: none
+    mpn: board pad
+    package: round pad, 1 mm
+    size: [1.0, 1.0, 0.05]
+    status: verified
+    url: ""
+  celltabs:
+    function: Pads the cell tabs are soldered to
+    manufacturer: none
+    mpn: board pads
+    package: two pads
+    size: [1.6, 4.4, 0.3]
+    status: unverified
+    url: ""
+  passive0603:
+    function: Bulk capacitor
+    manufacturer: generic
+    mpn: "0603"
+    package: "0603"
+    size: [1.6, 0.8, 0.8]
+    status: verified
+    url: ""
   passive0201:
-    function: Resistor, capacitor, bead, diode
+    function: Radio and decoupling parts, bead, diode
     manufacturer: generic
     mpn: "0201"
     package: "0201"
@@ -118,7 +142,7 @@ parts:
     status: verified
     url: ""
   passive0402:
-    function: Bulk capacitor, small inductor
+    function: Resistor, capacitor, small inductor
     manufacturer: generic
     mpn: "0402"
     package: "0402"

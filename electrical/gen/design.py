@@ -1,14 +1,15 @@
 """The Manent band circuit as data: parts, values and nets.
 
-The power, microcontroller and radio blocks are the ring's (manent-ring,
-electrical/gen/design.py), whose pin tables were read from the manufacturers' documents.
-What is new here is marked in the notes: two microphones, a larger flash in a standard
-package, a light other people can see, the 32.768 kHz crystal fitted.
+The blocks are the ring's (manent-ring, electrical/gen/design.py) in packages an ordinary
+four-layer board can carry: both Nordic chips are the QFN versions. What else is new is
+marked in the notes: two microphones, a larger flash, a light other people can see, the
+32.768 kHz crystal fitted.
 Anything not confirmed carries a Note saying so; the notes end up in the bill of materials.
 """
 from collections import defaultdict
 
 from .emit import Component, Pin, SymDef, two_pin
+from .footprints import LIB_NAME, footprint_of
 
 SHEETS = [("power", "Power and charging"), ("mcu_rf", "Microcontroller and radio"),
           ("audio", "Microphones"), ("storage", "Flash memory"), ("ui", "Button, light, pads")]
@@ -26,6 +27,7 @@ def ic(name, prefix, spec, width=30.48):
 R, C, L, D, FB = (two_pin(n, p) for n, p in (("R", "R"), ("C", "C"), ("L", "L"), ("D", "D"), ("FB", "FB")))
 LED = two_pin("LED", "D")
 XTAL = two_pin("XTAL", "Y")
+XTAL4 = ic("XTAL4", "Y", "1 X1 p L\n3 X2 p R\n2 CASE p L\n4 CASE p R", width=10.16)
 SW = two_pin("SW", "SW")
 CELL = two_pin("CELL", "BT")
 TVS = two_pin("TVS", "D")
@@ -35,92 +37,93 @@ ANT = SymDef("ANTENNA", "AE", (Pin("1", "FEED", "passive", "L"),), width=10.16)
 FLAG = SymDef("PWR_FLAG", "#FLG", (Pin("1", "pwr", "power_out", "L"),), width=5.08, virtual=True)
 NFET = ic("NMOS", "Q", "1 G i L\n2 S p R\n3 D p R", width=10.16)
 
-SOC = ic("nRF54L15-CAAA", "U", """
-B7 VDD pi L
-G3 VDD pi L
-A7 DCC p L
-A5 DECD p L
-A4 DECA p L
-B1 DECRF p L
-A6 VSS pi L
-G4 VSS pi L
-C2 VSS_PA pi L
-A1 XC1 p L
-A2 XC2 p L
-D1 ANT p L
-D2 nRESET i L
-E3 SWDCLK i L
-F2 SWDIO b L
-G1 P0.00 b L
-F1 P0.01 b L
-E2 P0.02 b L
-E1 P0.03 b L
-D3 P0.04 b L
-C5 P1.00/XL1 b L
-C6 P1.01/XL2 b L
-C7 P1.02 b L
-D5 P1.03 b L
-D6 P1.04 b R
-E6 P1.05 b R
-D7 P1.06 b R
-E7 P1.07 b R
-F7 P1.08 b R
-B3 P1.09 b R
-C3 P1.10 b R
-C4 P1.11 b R
-A3 P1.12 b R
-B4 P1.13 b R
-B5 P1.14 b R
-B6 P1.15 b R
-G6 P2.00 b R
-G7 P2.01 b R
-F6 P2.02 b R
-E5 P2.03 b R
-F5 P2.04 b R
-G5 P2.05 b R
-F4 P2.06 b R
-E4 P2.07 b R
-D4 P2.08 b R
-F3 P2.09 b R
-G2 P2.10 b R
+# Pin tables read on 2026-11-23 from Nordic's product specifications (see parts/pins).
+SOC = ic("nRF54L15-QFAA", "U", """
+1 P1.00/XL1 b L
+2 P1.01/XL2 b L
+3 P1.02 b L
+4 P1.03 b L
+5 P1.04 b R
+6 P1.05 b R
+7 P1.06 b R
+8 P1.07 b R
+9 P1.08 b R
+10 VDD pi L
+11 P2.00 b R
+12 P2.01 b R
+13 P2.02 b R
+14 P2.03 b R
+15 P2.04 b R
+16 P2.05 b R
+17 P2.06 b R
+18 P2.07 b R
+19 P2.08 b R
+20 P2.09 b R
+21 P2.10 b R
+22 VDD pi L
+23 P0.00 b L
+24 P0.01 b L
+25 SWDIO b L
+26 SWDCLK i L
+27 P0.02 b L
+28 P0.03 b L
+29 P0.04 b L
+30 nRESET i L
+31 ANT p L
+32 VSS_PA pi L
+33 DECRF p L
+34 XC1 p L
+35 XC2 p L
+36 VDD pi L
+37 P1.09 b R
+38 P1.10 b R
+39 P1.11 b R
+40 P1.12 b R
+41 P1.13 b R
+42 P1.14 b R
+43 DECA p L
+44 VSS pi L
+45 DECD p L
+46 DCC p L
+47 VDD pi L
+48 VDD pi L
+49 VSS pi L
 """)
 
-PMIC = ic("nPM1304-CAAA", "U", """
-B1 VBUS pi L
-B2 VBUS pi L
-C3 VBUSOUT p L
-B3 CC2 i L
-D5 CC1 i L
-D1 VBAT p L
-D2 VBAT p L
-D3 NTC i L
-C1 VSYS po L
-C2 VSYS p L
-C7 PVDD pi L
-E4 VDDIO pi L
-A6 AVSS pi L
-A7 PVSS1 pi L
-E7 PVSS2 pi L
-E2 VSET1 p L
-E1 VSET2 p L
-D4 SHPHLD i L
-B7 SW1 p R
-B6 VOUT1 po R
-D7 SW2 p R
-C6 VOUT2 p R
-B4 LSIN1 pi R
-A4 LSOUT1 po R
-B5 LSIN2 pi R
-A5 LSOUT2 po R
-E3 SCL i R
-E5 SDA b R
-D6 GPIO0 b R
-E6 GPIO1 b R
-C5 GPIO2 b R
-C4 GPIO3 b R
-A1 LED0 p R
-A2 LED1 p R
-A3 LED2 p R
+PMIC = ic("nPM1304-QEAA", "U", """
+1 VOUT1 po R
+2 PVSS1 pi L
+3 SW1 p R
+4 PVDD pi L
+5 SW2 p R
+6 PVSS2 pi L
+7 GPIO0 b R
+8 GPIO1 b R
+9 GPIO2 b R
+10 GPIO3 b R
+11 GPIO4 b R
+12 VDDIO pi L
+13 SDA b R
+14 SCL i R
+15 SHPHLD i L
+16 VSET2 p L
+17 VSET1 p L
+18 NTC i L
+19 VBAT p L
+20 VSYS po L
+21 VBUS pi L
+22 VBUSOUT p L
+23 CC1 i L
+24 CC2 i L
+25 LED0 p R
+26 LED1 p R
+27 LED2 p R
+28 LSIN1 pi R
+29 LSOUT1 po R
+30 LSIN2 pi R
+31 LSOUT2 po R
+32 VOUT2 p R
+33 AVSS pi L
 """)
 
 PROT = ic("S-82A1A", "U", "1 VSS pi L\n2 VDD pi L\n3 VINI i L\n4 VM i R\n5 CO o R\n6 DO o R", width=20.32)
@@ -144,7 +147,7 @@ SOC_NETS = {
     "P1.00/XL1": "XL1", "P1.01/XL2": "XL2",
     "P1.04": "PDM_CLK", "P1.05": "PDM_DIN", "P1.06": "MIC_A_THSEL", "P1.07": "MIC_A_WAKE",
     "P1.09": "MIC_B_THSEL", "P1.10": "MIC_B_WAKE",
-    "P1.13": "MIC_EN", "P1.14": "UART_TX", "P1.15": "UART_RX",
+    "P1.11": "UART_TX", "P1.12": "UART_RX", "P1.13": "MIC_EN",
     "P2.01": "SPI_SCK", "P2.02": "SPI_SDO", "P2.04": "SPI_SDI", "P2.05": "FLASH_CS",
 }
 
@@ -167,8 +170,8 @@ def build() -> list[Component]:
         """Nets keyed by pin name; pins not named get a no-connect."""
         return {p.number: mapping.get(p.name) for p in sym.pins}
 
-    cap = lambda v, net, sheet, pkg="0201", note="", **kw: add(C, v, sheet, (net, "GND"), package=pkg, note=note, **kw)
-    res = lambda v, a, b, sheet, note="", **kw: add(R, v, sheet, (a, b), package="0201", note=note, **kw)
+    cap = lambda v, net, sheet, pkg="0402", note="", **kw: add(C, v, sheet, (net, "GND"), package=pkg, note=note, **kw)
+    res = lambda v, a, b, sheet, note="", pkg="0402", **kw: add(R, v, sheet, (a, b), package=pkg, note=note, **kw)
 
     # ---- power (as on the ring) --------------------------------------------------------
     add(PMIC, "nPM1304", "power", by_name(PMIC, {
@@ -177,18 +180,18 @@ def build() -> list[Component]:
         "VSET1": "VSET1", "VSET2": "GND", "SHPHLD": "BTN_N", "SW1": "SW1", "VOUT1": "V1V8",
         "VOUT2": "GND", "LSIN1": "V1V8", "LSOUT1": "VMIC", "LSIN2": "V1V8", "LSOUT2": "VFLASH",
         "SCL": "I2C_SCL", "SDA": "I2C_SDA", "GPIO0": "PMIC_INT", "GPIO1": "MIC_EN",
-    }), mpn="nPM1304-CAAA-R", mfr="Nordic Semiconductor", package="WLCSP-35",
+    }), mpn="nPM1304-QEAA-R7", mfr="Nordic Semiconductor", package="QFN-32 5x5, 0.5 mm pitch",
         note="Charges at up to 100 mA: enough for these cells. "
              "BUCK2 unused: VSET2 grounded as documented; SW2 open and VOUT2 grounded are not confirmed. "
-             "LED0-2, GPIO2-3 left open: not confirmed. NTC grounded: set DISABLENTC in firmware")
-    add(L, "2.2uH", "power", ("SW1", "V1V8"), mpn="to choose", package="0603",
-        note="DCR <= 0.4 ohm, Isat > 350 mA; part and height to choose")
+             "LED0-2, GPIO2-4 left open: not confirmed. NTC grounded: set DISABLENTC in firmware")
+    add(L, "2.2uH", "power", ("SW1", "V1V8"), mpn="to choose", package="0806",
+        note="Nordic asks for DCR under 0.4 ohm in 0806 (2.0 x 1.6 mm); part to choose")
     res("47k", "VSET1", "GND", "power", note="Sets BUCK1 to 1.8 V at power-on")
-    cap("1uF 25V", "VBUS", "power", pkg="0402", note=UNVERIFIED_CAPS)
+    cap("1uF 25V", "VBUS", "power", pkg="0603", note=UNVERIFIED_CAPS)
     cap("1uF", "VBUSOUT", "power", note=UNVERIFIED_CAPS)
-    cap("10uF", "VBAT", "power", pkg="0402", note=UNVERIFIED_CAPS)
-    cap("10uF", "VSYS", "power", pkg="0402", note=UNVERIFIED_CAPS)
-    cap("10uF", "V1V8", "power", pkg="0402", note="Buck output: at least 4 uF effective")
+    cap("10uF", "VBAT", "power", pkg="0603", note=UNVERIFIED_CAPS)
+    cap("10uF", "VSYS", "power", pkg="0603", note=UNVERIFIED_CAPS)
+    cap("10uF", "V1V8", "power", pkg="0603", note="Buck output: at least 4 uF effective")
     cap("100nF", "V1V8", "power", note="VDDIO")
     cap("1uF", "VMIC", "power", note="Load switch output; value to confirm")
     cap("1uF", "VFLASH", "power", note="Load switch output; value to confirm")
@@ -219,38 +222,42 @@ def build() -> list[Component]:
         note="Discharge FET; a dual common-drain part in about 1x1 mm")
     add(NFET, "N-MOSFET", "power", {"1": "PROT_CO", "2": "GND", "3": "FET_MID"}, mpn="to choose", note="Charge FET")
 
-    # ---- microcontroller and radio (Nordic CAAA reference circuit 0.7, DC/DC, NFC off) --
+    # ---- microcontroller and radio (Nordic QFAA reference circuit, configuration 1: DC/DC, no NFC) --
+    # The reference schematic is a picture: values and part numbers were read from its labels,
+    # which net each one sits on was not. The wiring below follows the ring's verified CSP circuit
+    # with the one difference the pin table states: DECRF is joined to DECA.
+    REF = "Value from Nordic's QFN48 reference; its place in the circuit is assumed from the CSP47 one"
     add(SOC, "nRF54L15", "mcu_rf", by_name(SOC, {
-        "VDD": "V1V8", "DCC": "DCC", "DECD": "DECD", "DECA": "DECA", "DECRF": "DECRF",
+        "VDD": "V1V8", "DCC": "DCC", "DECD": "DECD", "DECA": "DECA", "DECRF": "DECA",
         "VSS": "GND", "VSS_PA": "GND", "XC1": "XC1", "XC2": "XC2", "ANT": "ANT",
         "nRESET": "NRESET", "SWDCLK": "SWDCLK", "SWDIO": "SWDIO", **SOC_NETS,
-    }), mpn="nRF54L15-CAAA-R", mfr="Nordic Semiconductor", package="WLCSP-47, 0.3 mm pitch",
-        note="Light-sensitive package: keep it in the dark, away from the light pipe. "
-             "The QFN48 version would allow an ordinary board; its pin table is not read yet")
-    cap("10uF", "V1V8", "mcu_rf", pkg="0402")
-    cap("100nF", "V1V8", "mcu_rf")
-    cap("100nF", "V1V8", "mcu_rf")
-    add(L, "4.7uH", "mcu_rf", ("DCC", "DECD"), mpn="PLEA67BCA4R7M-1PT00", mfr="TDK", package="0402")
-    cap("2.2uF", "DECD", "mcu_rf", mpn="GRM033R61A225KE47", mfr="Murata")
-    add(FB, "120R@100MHz", "mcu_rf", ("DECD", "DECA"), mpn="BLM03AG121SN1D", mfr="Murata", package="0201")
-    cap("2.2uF", "DECA", "mcu_rf", mpn="GRM033R61A225KE47", mfr="Murata")
-    cap("10nF", "DECA", "mcu_rf", dnp=True, note="Not fitted in Nordic's reference")
-    add(FB, "120R@100MHz", "mcu_rf", ("DECA", "DECRF"), mpn="BLM03AG121SN1D", mfr="Murata", package="0201")
-    cap("2.2uF", "DECRF", "mcu_rf", mpn="GRM033R61A225KE47", mfr="Murata")
-    cap("3.9pF", "DECRF", "mcu_rf", dnp=True, note="Not fitted in Nordic's reference")
-    add(XTAL, "32MHz 8pF", "mcu_rf", ("XC1", "XC2"), mpn="CX1612DB32000D0WZRC3", mfr="Kyocera", package="1612",
-        note="Load capacitors are inside the chip")
+    }), mpn="nRF54L15-QFAA-R", mfr="Nordic Semiconductor", package="QFN-48 6x6, 0.4 mm pitch",
+        note="Pin 49 is the exposed pad: ground")
+    cap("10uF", "V1V8", "mcu_rf", pkg="0603")
+    for _ in range(4):
+        cap("100nF", "V1V8", "mcu_rf", pkg="0201", note="One next to each side's VDD pin. " + REF)
+    add(L, "4.7uH", "mcu_rf", ("DCC", "DECD"), mpn="to choose", package="0402", note="DC/DC inductor. " + REF)
+    cap("2.2uF", "DECD", "mcu_rf", pkg="0201", note=REF)
+    add(FB, "ferrite bead", "mcu_rf", ("DECD", "DECA"), mpn="to choose", package="0201",
+        note="The reference gives no value; the ring uses 120 ohm at 100 MHz (BLM03AG121SN1D)")
+    cap("2.2uF", "DECA", "mcu_rf", pkg="0201", note=REF)
+    cap("10nF", "DECA", "mcu_rf", pkg="0201", note=REF)
+    add(XTAL4, "32MHz", "mcu_rf", {"1": "XC1", "3": "XC2", "2": "GND", "4": "GND"}, mpn="to choose", package="2016",
+        note="2.0 x 1.6 mm, as in the reference; pads 2 and 4 are the lid, grounded: check against the part chosen. "
+             "Load capacitors are inside the chip")
     add(XTAL, "32.768kHz 9pF", "mcu_rf", ("XL1", "XL2"), mpn="9HT11-32.768KDZC-T", mfr="TXC", package="2012",
         note="Fitted, unlike on the ring: the band stays connected for days and there is room. "
              "Load capacitors are inside the chip")
-    add(L, "4.7nH", "mcu_rf", ("ANT", "RF_A"), mpn="LQP03HQ4N7H02", mfr="Murata", package="0201")
-    cap("1.2pF", "RF_A", "mcu_rf", mpn="GJM0335C1H1R2WB01D", mfr="Murata")
-    add(L, "4.7nH", "mcu_rf", ("RF_A", "RF_B"), mpn="LQP03HQ4N7H02", mfr="Murata", package="0201")
-    cap("1.2pF", "RF_B", "mcu_rf", mpn="GJM0335C1H1R2WB01D", mfr="Murata")
-    add(L, "2.0nH", "mcu_rf", ("RF_B", "RF_50"), mpn="LQP03HQ2N0B02", mfr="Murata", package="0201")
-    res("0", "RF_50", "ANT_FEED", "mcu_rf", note="Antenna tuning, series: value from measurement in a closed pod on a wrist")
-    cap("tune", "RF_50", "mcu_rf", dnp=True, note="Antenna tuning, shunt")
-    cap("tune", "ANT_FEED", "mcu_rf", dnp=True, note="Antenna tuning, shunt")
+    MATCH = "Matching network: part from the reference, order in the chain assumed"
+    add(L, "2.7nH", "mcu_rf", ("ANT", "RF_A"), mpn="LQP03HQ2N7B02", mfr="Murata", package="0201", note=MATCH)
+    cap("1.5pF", "RF_A", "mcu_rf", pkg="0201", mpn="GJM0335C1E1R5WB01", mfr="Murata", note=MATCH)
+    add(L, "3.5nH", "mcu_rf", ("RF_A", "RF_B"), mpn="LQP03HQ3N5B02", mfr="Murata", package="0201", note=MATCH)
+    cap("2.0pF", "RF_B", "mcu_rf", pkg="0201", mpn="GJM0335C1E2R0WB01", mfr="Murata", note=MATCH)
+    add(L, "3.5nH", "mcu_rf", ("RF_B", "RF_50"), mpn="LQP03HQ3N5B02", mfr="Murata", package="0201", note=MATCH)
+    res("0", "RF_50", "ANT_FEED", "mcu_rf", pkg="0201",
+        note="Antenna tuning, series: value from measurement in a closed pod on a wrist")
+    cap("tune", "RF_50", "mcu_rf", pkg="0201", dnp=True, note="Antenna tuning, shunt")
+    cap("tune", "ANT_FEED", "mcu_rf", pkg="0201", dnp=True, note="Antenna tuning, shunt")
     add(ANT, "2.4 GHz", "mcu_rf", ("ANT_FEED",), mpn="to choose", package="1608 chip antenna",
         note="Chip antenna or printed trace in the corner of the board; decided with the first radio measurements")
 
@@ -262,7 +269,7 @@ def build() -> list[Component]:
             mpn="MMICT5838-00-012", mfr="TDK InvenSense", package="3.5x2.65x0.98 bottom port",
             note=f"Microphone {name}, at {where}; SELECT at {select} picks its clock edge. "
                  "No pull resistor on DATA. Board hole 0.5-1.0 mm under the port")
-        cap("100nF", "VMIC", "audio", note=f"X7R, next to pin 7 of microphone {name}")
+        cap("100nF", "VMIC", "audio", pkg="0201", note=f"X7R, next to pin 7 of microphone {name}")
 
     # ---- flash ---------------------------------------------------------------------------
     add(FLASH, "W25Q512NW", "storage", by_name(FLASH, {
@@ -279,7 +286,7 @@ def build() -> list[Component]:
     # ---- button, light, pads ---------------------------------------------------------------
     add(SW, "tactile", "ui", ("BTN_N", "GND"), mpn="EVPBB2A9B000", mfr="Panasonic", package="2.6x1.6x0.53",
         note="1.6 N; pulled up inside the PMIC (SHPHLD)")
-    add(D, "Schottky", "ui", ("BTN_N", "BTN_WAKE"), mpn="RB521ZS-30", mfr="Rohm", package="0201 class",
+    add(D, "Schottky", "ui", ("BTN_N", "BTN_WAKE"), mpn="RB521ZS-30", mfr="Rohm", package="0201",
         note="Pin 1 is the cathode. Anode at the SoC: keeps the PMIC pull-up voltage off the 1.8 V pin")
     add(LED, "red", "ui", ("LED_K", "VSYS"), mpn="SML-P11VT", mfr="Rohm", package="1.0x0.6x0.2",
         note="Pin 1 is the cathode. Seen from outside through a light pipe")
@@ -297,6 +304,10 @@ def build() -> list[Component]:
     for label, net in (("nRESET", "NRESET"), ("UART TX", "UART_TX"), ("UART RX", "UART_RX"), ("1V8", "V1V8"),
                        ("GND", "GND"), ("VBAT", "VBAT"), ("VBUS", "VBUS")):
         add(PAD, label, "ui", (net,), note="Test pad on the board, for the factory test before the pod is closed")
+    for c in comps:
+        fp = footprint_of(c)
+        if fp:
+            c.fields["Footprint"] = f"{LIB_NAME}:{fp}"
     return comps
 
 

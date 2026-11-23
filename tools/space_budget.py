@@ -19,11 +19,11 @@ o = ["# Space budget", "",
      "- The microphones are bottom-port parts: they hang under the board, one at each end, with their hole",
      "  through it. The cell stops short of both ends, and the same two zones hold the spring contacts.",
      f"- The two microphones are at least {S.MIN_MIC_DISTANCE:.0f} apart.",
-     "- Every large part has a place on the board and none overlaps another or a keep-out (antenna corner,",
-     "  button cap, microphone gaskets, cell tab slot). The fine-pitch chips keep "
+     "- Every part the pod decides has a place on the board and none overlaps another or a keep-out (antenna",
+     "  corner, button cap, microphone gaskets). The two QFN chips keep "
      f"{S.FINE_PITCH_MARGIN} clear around them.",
-     f"- Small parts are counted by area, each with {S.PART_SPACING} of spacing, and may take at most {S.PACKING:.0%} of the",
-     "  free board. This checks that the parts have room; it does not check that the tracks can be routed.", ""]
+     f"- The other parts are counted here by area, each with {S.PART_SPACING} of spacing, and may take at most {S.PACKING:.0%} of the",
+     "  free board. Their actual places are in the board file; nothing here checks that the tracks can be routed.", ""]
 for key, e in rep["envelopes"].items():
     adopted = " (adopted)" if key == rep["adopted"] else ""
     o += [f"## Envelope {e['envelope']}{adopted}: {e['pod'][0]} x {e['pod'][1]} x {e['pod'][2]}", "",
