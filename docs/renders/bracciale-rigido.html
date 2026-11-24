@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bracciale rigido Manent</title>
+<style>
+:root {
+  --bg: #f1efea; --ink: #1c1b19; --muted: #6b675f; --line: #c4beb2; --card: #faf9f6;
+  --accent: #b4532a; --keepout: #2f7d6d; --skin: #e4dcd1; --ti: #3a3b3f; --zr: #111114;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #131312; --ink: #ecebe6; --muted: #9d998f; --line: #46433d; --card: #1b1b19;
+    --accent: #e07a4a; --keepout: #5cc0a8; --skin: #4a453f; --ti: #8a8b90; --zr: #2a2b30;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #131312; --ink: #ecebe6; --muted: #9d998f; --line: #46433d; --card: #1b1b19;
+  --accent: #e07a4a; --keepout: #5cc0a8; --skin: #4a453f; --ti: #8a8b90; --zr: #2a2b30;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink);
+  font: 15px/1.55 ui-sans-serif, system-ui, "Helvetica Neue", Arial, sans-serif; }
+main { max-width: 1080px; margin: 0 auto; padding: 40px 16px 64px; }
+h1 { font-size: 28px; font-weight: 600; letter-spacing: -0.01em; margin: 0 0 4px; }
+.sub { color: var(--muted); margin: 0 0 24px; }
+h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600; margin: 36px 0 12px; }
+figure { margin: 0; background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+figcaption { color: var(--muted); font-size: 13px; margin-top: 10px; }
+#stage { position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 6px; overflow: hidden;
+  background: radial-gradient(120% 90% at 50% 35%, #fdfcf9 0%, #e3dfd7 100%); }
+@media (max-width: 640px) { #stage { aspect-ratio: 4 / 3; } }
+#stage canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+#stage .err { position: absolute; inset: 0; display: grid; place-items: center; color: #555; padding: 16px; text-align: center; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+button { font: inherit; font-size: 13px; color: var(--ink); background: transparent; border: 1px solid var(--line);
+  border-radius: 999px; padding: 5px 12px; cursor: pointer; }
+button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 760px) { .grid { grid-template-columns: 1fr; } }
+svg { display: block; width: 100%; height: auto; }
+.lbl { font: 2.4px ui-sans-serif, system-ui, sans-serif; fill: var(--ink); }
+.lbl-m { font: 2.1px ui-sans-serif, system-ui, sans-serif; fill: var(--muted); }
+.lead { stroke: var(--muted); stroke-width: 0.15; fill: none; }
+.dim { stroke: var(--accent); stroke-width: 0.2; fill: none; }
+.dimt { font: 2.4px ui-sans-serif, system-ui, sans-serif; fill: var(--accent); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+.note { border-left: 3px solid var(--accent); padding: 4px 12px; color: var(--muted); margin-top: 16px; }
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<main>
+  <h1>Bracciale rigido Manent</h1>
+  <p class="sub">Titanio nero aperto a C, con il pod in zirconia come chiave di volta. Pod alla misura minima che regge i requisiti: 36 × 18,5 × 8,5 mm, batteria da 120 mAh. Proposta, non misurata.</p>
+
+  <figure>
+    <div id="stage"></div>
+    <div class="controls">
+      <button id="bWrist" aria-pressed="true">Polso</button>
+      <button id="bSpin" aria-pressed="true">Rotazione</button>
+      <button id="bTop">Dall'alto</button>
+      <button id="bSide">Di fianco</button>
+      <button id="bEnd">Lungo il braccio</button>
+      <button id="bHero">3/4</button>
+    </div>
+    <figcaption>Modello 3D in scala reale, unità in mm; si ruota trascinando. Polso medio, ovale 58 × 40 mm. Il pod ha il lato lungo lungo l'avambraccio; l'antenna è all'estremità verso la mano.</figcaption>
+  </figure>
+
+  <div class="grid">
+    <div>
+      <h2>Sezione attraverso il polso</h2>
+      <figure>
+        <svg viewBox="-40 -38 80 72" role="img" aria-label="Sezione trasversale del polso con il bracciale e il pod">
+          <!-- y SVG verso il basso; il dorso del polso è in alto -->
+          <ellipse cx="0" cy="0" rx="29" ry="20" fill="var(--skin)"/>
+          <text class="lbl-m" x="-5" y="1">polso</text>
+          <!-- bracciale: corona ellittica 2,2 mm, aperta in basso -->
+          <path id="cuffArc" d="M -11.9 18.6 A 30.5 20.2 0 1 1 11.9 18.6" fill="none" stroke="var(--ti)" stroke-width="2.2" stroke-linecap="round"/>
+          <!-- ponte sottile sotto il pod -->
+          <rect x="-6" y="-21.0" width="12" height="0.8" fill="var(--ti)"/>
+          <!-- ganasce -->
+          <rect x="-11.6" y="-25.5" width="2.3" height="5" rx="0.6" fill="var(--ti)"/>
+          <rect x="9.3" y="-25.5" width="2.3" height="5" rx="0.6" fill="var(--ti)"/>
+          <!-- pod -->
+          <rect x="-9.25" y="-29.5" width="18.5" height="8.5" rx="1.6" fill="var(--zr)"/>
+          <!-- quote -->
+          <path class="dim" d="M 14 -29.5 H 16.5 M 14 -20 H 16.5 M 15.5 -29.5 V -20"/>
+          <text class="dimt" x="17.2" y="-24">9,5 sopra la pelle</text>
+          <path class="dim" d="M -9.25 -32 V -34.5 M 9.25 -32 V -34.5 M -9.25 -33.3 H 9.25"/>
+          <text class="dimt" x="-3.5" y="-35">18,5</text>
+          <path class="dim" d="M -10.8 24 H 10.8"/>
+          <text class="dimt" x="-9" y="28.5">apertura circa 22 mm</text>
+          <path class="lead" d="M -29 -9 L -36 -16"/>
+          <text class="lbl" x="-39" y="-17">titanio 2,2</text>
+          <path class="lead" d="M -11 -23 L -22 -29"/>
+          <text class="lbl" x="-39" y="-30">ganasce</text>
+        </svg>
+        <figcaption>Il retro del pod poggia quasi sulla pelle: lungo la circonferenza la curva del polso sotto 18,5 mm lascia circa 1 mm di vuoto.</figcaption>
+      </figure>
+    </div>
+    <div>
+      <h2>Lungo l'avambraccio</h2>
+      <figure>
+        <svg viewBox="-28 -20 56 36" role="img" aria-label="Vista laterale lungo l'avambraccio">
+          <rect x="-28" y="0" width="56" height="10" fill="var(--skin)"/>
+          <text class="lbl-m" x="-26" y="6">avambraccio</text>
+          <text class="lbl-m" x="16" y="6">mano →</text>
+          <!-- ponte -->
+          <rect x="-6" y="-0.8" width="12" height="0.8" fill="var(--ti)"/>
+          <!-- pod -->
+          <rect x="-18" y="-9.3" width="36" height="8.5" rx="1.6" fill="var(--zr)"/>
+          <!-- ganascia vista di lato -->
+          <rect x="-12" y="-5" width="24" height="5" rx="0.8" fill="var(--ti)" opacity="0.9"/>
+          <!-- pad sul retro, lato contatti -->
+          <rect x="-16.6" y="-0.95" width="1.4" height="0.25" fill="#d4b24a"/>
+          <rect x="-14.2" y="-0.95" width="1.4" height="0.25" fill="#d4b24a"/>
+          <!-- antenna e zona libera -->
+          <rect x="12.3" y="-11.5" width="7.7" height="12" fill="none" stroke="var(--keepout)" stroke-width="0.25" stroke-dasharray="0.8 0.5"/>
+          <text class="lbl" x="3" y="-12.6" style="fill: var(--keepout)">6 mm senza metallo</text>
+          <!-- microfoni -->
+          <circle cx="-15.35" cy="-9.3" r="0.45" fill="var(--accent)"/>
+          <circle cx="15.35" cy="-9.3" r="0.45" fill="var(--accent)"/>
+          <path class="lead" d="M -15.35 -9.8 L -17 -13"/>
+          <text class="lbl" x="-27" y="-13.6">microfoni</text>
+          <path class="lead" d="M -15.5 -0.6 L -20 11.5"/>
+          <text class="lbl" x="-27" y="13.8">pad di ricarica, al dock</text>
+          <path class="lead" d="M 3 -0.4 L 6 11.5"/>
+          <text class="lbl" x="2" y="13.8">ponte 12 × 0,8</text>
+        </svg>
+        <figcaption>Le ganasce tengono i fianchi lunghi del pod per 24 mm al centro; le due estremità restano libere: a destra l'antenna, a sinistra i pad per il dock.</figcaption>
+      </figure>
+    </div>
+  </div>
+
+  <h2>Numeri</h2>
+  <table>
+    <tr><th>Cosa</th><th>Valore</th><th>Da dove</th></tr>
+    <tr><td>Pod</td><td>36 × 18,5 × 8,5 mm, 120 mAh, circa 6,3 g</td><td>fit model del progetto, misura minima che passa</td></tr>
+    <tr><td>Durata</td><td>6,1 giorni tipici, 2,1 nel caso peggiore</td><td>power budget, stesse cifre della misura adottata</td></tr>
+    <tr><td>Bracciale</td><td>titanio grado 5 con DLC nero, 2,2 mm, largo 24 mm accanto al pod e 10 mm sotto; circa 13 g</td><td>stima</td></tr>
+    <tr><td>Altezza sul polso</td><td>9,5 mm al pod, 2,2 mm altrove</td><td>dal disegno</td></tr>
+    <tr><td>Taglie</td><td>S, M, L: è rigido e si flette di pochi millimetri</td><td>da provare su polsi veri</td></tr>
+  </table>
+  <p class="note">Da misurare: la distanza dal metallo che l'antenna tollera (6 mm è un'ipotesi), se il ponte sotto il pod disturba, quanto si apre il titanio senza deformarsi, e se il pod resta fermo sul dorso o ruota sul polso.</p>
+</main>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+const stage = document.getElementById('stage');
+let renderer;
+try {
+  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+} catch (e) {
+  stage.innerHTML = '<div class="err">Questo browser non mostra il WebGL: le sezioni qui sotto hanno le stesse misure.</div>';
+  throw e;
+}
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.0;
+stage.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(renderer), 0.04).texture;
+
+const camera = new THREE.PerspectiveCamera(30, 16 / 9, 1, 2000);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.target.set(0, 14, 0);
+controls.autoRotate = true;
+controls.autoRotateSpeed = 0.8;
+controls.minDistance = 50; controls.maxDistance = 400;
+
+const key = new THREE.DirectionalLight(0xffffff, 1.6);
+key.position.set(60, 120, 80);
+scene.add(key);
+const rim = new THREE.DirectionalLight(0xffffff, 0.8);
+rim.position.set(-80, 40, -60);
+scene.add(rim);
+
+// ---- materials
+const titanium = new THREE.MeshPhysicalMaterial({ color: 0x3c3d42, metalness: 1.0, roughness: 0.3 });
+const zirconia = new THREE.MeshPhysicalMaterial({ color: 0x08080a, metalness: 0.0, roughness: 0.28,
+  clearcoat: 0.35, clearcoatRoughness: 0.35, reflectivity: 0.35, envMapIntensity: 0.5 });
+const skin = new THREE.MeshStandardMaterial({ color: 0xb9aea1, roughness: 0.9 });
+const hole = new THREE.MeshStandardMaterial({ color: 0x000000, roughness: 1 });
+const led = new THREE.MeshStandardMaterial({ color: 0x400000, emissive: 0xff2a10, emissiveIntensity: 2.2 });
+
+// ---- wrist: ellipse 58 x 40, along Z
+const WA = 29, WB = 20;
+{
+  const s = new THREE.Shape();
+  s.absellipse(0, 0, WA - 2, WB - 2, 0, Math.PI * 2);
+  const g = new THREE.ExtrudeGeometry(s, { depth: 130, bevelEnabled: true, bevelThickness: 3, bevelSize: 2, bevelSegments: 6, curveSegments: 96 });
+  g.translate(0, 0, -65);
+  var wrist = new THREE.Mesh(g, skin);
+  scene.add(wrist);
+}
+
+// ---- cuff: swept rounded section along an ellipse, open at the bottom
+const CA = 30.5, CB = 20.2;            // inner surface of the cuff
+const T_POD = Math.asin(9.3 / CA);      // where the pod's long sides are
+const T_END = Math.PI - 0.40;           // gap at the bottom
+const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+function widthAt(t) {
+  const u = Math.abs(t);
+  if (u < T_POD) return 12;                                    // bridge under the pod
+  return 24 - 14 * smooth(T_POD + 0.05, T_END, u);              // 24 at the jaws, 10 at the ends
+}
+function thickAt(t) {
+  const u = Math.abs(t);
+  if (u < T_POD) return 0.8;                                   // bridge
+  return 2.2 + 2.8 * (1 - smooth(T_POD + 0.04, T_POD + 0.22, u)); // jaw rises to 5 mm beside the pod
+}
+function profile(w, th, r, n) {        // rounded rectangle: u along the normal, v along Z
+  const pts = [];
+  r = Math.min(r, th / 2 - 0.01, w / 2 - 0.01);
+  const corners = [[th - r, w / 2 - r, 0], [r, w / 2 - r, Math.PI / 2], [r, -w / 2 + r, Math.PI], [th - r, -w / 2 + r, 1.5 * Math.PI]];
+  for (const [cu, cv, a0] of corners)
+    for (let i = 0; i < n; i++) { const a = a0 + (i / (n - 1)) * Math.PI / 2; pts.push([cu + r * Math.cos(a), cv + r * Math.sin(a)]); }
+  return pts;
+}
+function buildCuff() {
+  const N = 900, K = 10, M = 4 * K;
+  const pos = [], idx = [];
+  const rings = [];
+  for (let i = 0; i <= N; i++) {
+    const t = -T_END + (2 * T_END) * i / N;
+    const px = CA * Math.sin(t), py = CB * Math.cos(t);
+    let nx = px / (CA * CA), ny = py / (CB * CB); const l = Math.hypot(nx, ny); nx /= l; ny /= l;
+    const prof = profile(widthAt(t), thickAt(t), 0.9, K);
+    const base = pos.length / 3; rings.push(base);
+    for (const [u, v] of prof) pos.push(px + nx * u, py + ny * u, v);
+  }
+  for (let i = 0; i < N; i++)
+    for (let j = 0; j < M; j++) {
+      const a = rings[i] + j, b = rings[i] + (j + 1) % M, c = rings[i + 1] + j, d = rings[i + 1] + (j + 1) % M;
+      idx.push(a, c, b, b, c, d);
+    }
+  for (const [ri, flip] of [[0, true], [N, false]]) {     // end caps
+    const base = rings[ri]; let cx = 0, cy = 0, cz = 0;
+    for (let j = 0; j < M; j++) { cx += pos[3 * (base + j)]; cy += pos[3 * (base + j) + 1]; cz += pos[3 * (base + j) + 2]; }
+    const ci = pos.length / 3; pos.push(cx / M, cy / M, cz / M);
+    for (let j = 0; j < M; j++) { const a = base + j, b = base + (j + 1) % M; flip ? idx.push(ci, a, b) : idx.push(ci, b, a); }
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.setIndex(idx);
+  g.computeVertexNormals();
+  return g;
+}
+scene.add(new THREE.Mesh(buildCuff(), titanium));
+
+// ---- pod: 18.5 (X) x 36 (Z) x 8.5 (Y), corners 3
+const POD_W = 18.5, POD_L = 36, POD_H = 8.5, BEV = 1.2;
+const podBase = CB + 0.8;
+{
+  const w = POD_W / 2 - BEV, l = POD_L / 2 - BEV, r = 3 - BEV;
+  const s = new THREE.Shape();
+  s.moveTo(-w + r, -l); s.lineTo(w - r, -l); s.quadraticCurveTo(w, -l, w, -l + r);
+  s.lineTo(w, l - r); s.quadraticCurveTo(w, l, w - r, l); s.lineTo(-w + r, l);
+  s.quadraticCurveTo(-w, l, -w, l - r); s.lineTo(-w, -l + r); s.quadraticCurveTo(-w, -l, -w + r, -l);
+  const g = new THREE.ExtrudeGeometry(s, { depth: POD_H - 2 * BEV, bevelEnabled: true, bevelThickness: BEV,
+    bevelSize: BEV, bevelSegments: 8, curveSegments: 24 });
+  g.rotateX(-Math.PI / 2);
+  g.translate(0, podBase + BEV, 0);
+  scene.add(new THREE.Mesh(g, zirconia));
+}
+const top = podBase + POD_H;
+function dot(x, z, r, mat, h = 0.12) {
+  const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, h, 32), mat);
+  m.position.set(x, top + h / 2 - 0.05, z); scene.add(m); return m;
+}
+dot(0, 15.35, 0.45, hole);           // microphone A, antenna end (towards the hand)
+dot(-6.3, -15.35, 0.45, hole);       // microphone B, contacts end
+dot(6.7, -14.8, 0.55, led, 0.14);    // light
+{                                     // button: a faint ring in the ceramic
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(3.0, 0.08, 12, 64),
+    new THREE.MeshPhysicalMaterial({ color: 0x1c1c20, roughness: 0.3 }));
+  ring.rotation.x = Math.PI / 2; ring.position.set(0, top - 0.02, 0); scene.add(ring);
+}
+
+// ---- views
+const views = {
+  hero: [new THREE.Vector3(70, 78, 98), new THREE.Vector3(0, 8, 0)],
+  top: [new THREE.Vector3(0, 175, 0.01), new THREE.Vector3(0, 10, 0)],
+  side: [new THREE.Vector3(175, 30, 0), new THREE.Vector3(0, 8, 0)],
+  end: [new THREE.Vector3(0, 25, 175), new THREE.Vector3(0, 8, 0)],
+};
+function setView(v) { camera.position.copy(views[v][0]); controls.target.copy(views[v][1]); controls.update(); }
+setView('hero');
+
+function resize() {
+  const w = stage.clientWidth, h = stage.clientHeight;
+  renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
+}
+new ResizeObserver(resize).observe(stage); resize();
+
+const bWrist = document.getElementById('bWrist'), bSpin = document.getElementById('bSpin');
+bWrist.onclick = () => { wrist.visible = !wrist.visible; bWrist.setAttribute('aria-pressed', wrist.visible); };
+bSpin.onclick = () => { controls.autoRotate = !controls.autoRotate; bSpin.setAttribute('aria-pressed', controls.autoRotate); };
+const stopSpin = () => { controls.autoRotate = false; bSpin.setAttribute('aria-pressed', 'false'); };
+document.getElementById('bTop').onclick = () => { stopSpin(); setView('top'); };
+document.getElementById('bSide').onclick = () => { stopSpin(); setView('side'); };
+document.getElementById('bEnd').onclick = () => { stopSpin(); setView('end'); };
+document.getElementById('bHero').onclick = () => setView('hero');
+if (new URLSearchParams(location.search).get('still') !== null) { controls.autoRotate = false; }
+const v = new URLSearchParams(location.search).get('view'); if (v && views[v]) setView(v);
+
+renderer.setAnimationLoop(() => { controls.update(); renderer.render(scene, camera); });
+</script>
+</body>
+</html>

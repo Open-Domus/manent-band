@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bracciale scolpito Manent</title>
+<style>
+:root {
+  --bg: #f1efea; --ink: #1c1b19; --muted: #6b675f; --line: #c4beb2; --card: #faf9f6;
+  --accent: #b4532a; --keepout: #2f7d6d; --skin: #e4dcd1; --ti: #55565c; --zr: #17171a;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #131312; --ink: #ecebe6; --muted: #9d998f; --line: #46433d; --card: #1b1b19;
+    --accent: #e07a4a; --keepout: #5cc0a8; --skin: #4a453f; --ti: #8a8b90; --zr: #34353b;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #131312; --ink: #ecebe6; --muted: #9d998f; --line: #46433d; --card: #1b1b19;
+  --accent: #e07a4a; --keepout: #5cc0a8; --skin: #4a453f; --ti: #8a8b90; --zr: #34353b;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink);
+  font: 15px/1.55 ui-sans-serif, system-ui, "Helvetica Neue", Arial, sans-serif; }
+main { max-width: 1080px; margin: 0 auto; padding: 40px 16px 64px; }
+h1 { font-size: 28px; font-weight: 600; letter-spacing: -0.01em; margin: 0 0 4px; }
+.sub { color: var(--muted); margin: 0 0 24px; max-width: 760px; }
+h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600; margin: 36px 0 12px; }
+figure { margin: 0; background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+figcaption { color: var(--muted); font-size: 13px; margin-top: 10px; }
+#stage { position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 6px; overflow: hidden;
+  background: radial-gradient(110% 85% at 50% 30%, #f7f5f1 0%, #d9d4cb 100%); }
+@media (max-width: 640px) { #stage { aspect-ratio: 4 / 3; } }
+#stage canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+#stage .err { position: absolute; inset: 0; display: grid; place-items: center; color: #555; padding: 16px; text-align: center; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+button { font: inherit; font-size: 13px; color: var(--ink); background: transparent; border: 1px solid var(--line);
+  border-radius: 999px; padding: 5px 12px; cursor: pointer; }
+button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 760px) { .grid { grid-template-columns: 1fr; } }
+svg { display: block; width: 100%; height: auto; }
+.lbl { font: 2.4px ui-sans-serif, system-ui, sans-serif; fill: var(--ink); }
+.lbl-m { font: 2.1px ui-sans-serif, system-ui, sans-serif; fill: var(--muted); }
+.lead { stroke: var(--muted); stroke-width: 0.15; fill: none; }
+.dim { stroke: var(--accent); stroke-width: 0.2; fill: none; }
+.dimt { font: 2.4px ui-sans-serif, system-ui, sans-serif; fill: var(--accent); }
+.mod { fill: none; stroke: var(--accent); stroke-width: 0.25; stroke-dasharray: 0.8 0.5; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+ul { padding-left: 18px; } li { margin: 4px 0; }
+.note { border-left: 3px solid var(--accent); padding: 4px 12px; color: var(--muted); margin-top: 16px; }
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<main>
+  <h1>Bracciale scolpito Manent</h1>
+  <p class="sub">Nessun pod in vista: il bracciale si gonfia sul dorso del polso e lì dentro sta l'elettronica. Zirconia nera sopra, titanio nero sulle braccia; il modulo entra dall'interno. Due varianti dello stesso modulo (36 × 18,5 × 8,5 mm), girato in due modi. Proposta, non misurata.</p>
+
+  <div class="controls" style="margin: 0 0 12px">
+    <button id="vLargo" aria-pressed="true">Largo: modulo lungo il braccio</button>
+    <button id="vStretto" aria-pressed="false">Stretto: modulo lungo il polso</button>
+  </div>
+
+  <figure>
+    <div id="stage"></div>
+    <div class="controls">
+      <button id="bWrist" aria-pressed="false">Polso</button>
+      <button id="bSpin" aria-pressed="true">Rotazione</button>
+      <button id="bHero">3/4</button>
+      <button id="bTop">Dall'alto</button>
+      <button id="bSide">Di fianco</button>
+      <button id="bEnd">Lungo il braccio</button>
+      <button id="bInside">Interno</button>
+    </div>
+    <figcaption>Modello 3D in scala reale (mm); si ruota trascinando. La linea sottile su ogni fianco è dove la zirconia incontra il titanio.</figcaption>
+  </figure>
+
+  <div class="grid">
+    <div>
+      <h2>Sezione attraverso il polso</h2>
+      <figure>
+        <svg id="secX" viewBox="-42 -42 84 74" role="img" aria-label="Sezione trasversale del polso con il bracciale"></svg>
+        <figcaption id="capX"></figcaption>
+      </figure>
+    </div>
+    <div>
+      <h2>Sezione lungo l'avambraccio</h2>
+      <figure>
+        <svg id="secZ" viewBox="-28 -20 56 40" role="img" aria-label="Sezione lungo l'avambraccio al centro del bracciale"></svg>
+        <figcaption id="capZ"></figcaption>
+      </figure>
+    </div>
+  </div>
+
+  <h2>Le due varianti</h2>
+  <table>
+    <tr><th></th><th>Largo</th><th>Stretto</th></tr>
+    <tr><td>Modulo</td><td>36 lungo l'avambraccio</td><td>36 lungo la circonferenza, come Bee e gli orologi</td></tr>
+    <tr><td>Larghezza in alto</td><td>39 mm</td><td>22 mm</td></tr>
+    <tr><td>Punte</td><td>7 × 2 mm</td><td>7 × 2 mm</td></tr>
+    <tr><td>Altezza al centro</td><td>10,2 mm</td><td>10,2 mm, dorso appena bombato</td></tr>
+    <tr><td>Altezza alle estremità del modulo</td><td>scende con continuità</td><td>14,7 mm sul polso del modello (ovale 58 × 40); su un polso vero, più piatto sul dorso, meno: da provare</td></tr>
+    <tr><td>Peso</td><td>circa 55 g (zirconia 23, titanio 26, modulo 6)</td><td>circa 41 g (zirconia 25, titanio 10, modulo 6)</td></tr>
+    <tr><td>Antenna</td><td>a un bordo, verso la mano; titanio a circa 10 mm</td><td>a un'estremità sul fianco del polso; titanio a circa 8 mm</td></tr>
+    <tr><td>Carattere</td><td>gioiello scultoreo, fascia morbida</td><td>bracciale sottile con una testa, alla maniera di un orologio senza quadrante</td></tr>
+  </table>
+  <p class="note">Entrambe sono controllate contro il modulo, con 0,8 mm di zirconia sopra: la forma lo contiene tutto. In entrambe il pod non si stacca più per andare su una clip e il tasto diventa un disco inserito. Da misurare: antenna sotto la zirconia, microfoni dietro i fori, peso e comfort reali.</p>
+</main>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+// ---------- common geometry
+const CA = 30.5, CB = 20.2;               // inner surface: an ellipse around the wrist
+const T_END = Math.PI - 0.42;              // gap at the bottom
+const GAP = 0.004;                         // seam line
+const N_TOP = 6, N_ARM = 3;
+const ss = x => { x = Math.min(1, Math.max(0, x)); return x * x * (3 - 2 * x); };
+const ROUND = 0.13;
+const tipScale = t => { const u = Math.abs(t) - (T_END - ROUND); return u <= 0 ? 1 : Math.sqrt(Math.max(1e-4, 1 - (u / ROUND) ** 2)); };
+function frame(t) {
+  const px = CA * Math.sin(t), py = CB * Math.cos(t);
+  let nx = px / (CA * CA), ny = py / (CB * CB); const l = Math.hypot(nx, ny);
+  return [px, py, nx / l, ny / l];
+}
+const spow = (x, e) => Math.sign(x) * Math.abs(x) ** e;
+
+// ---------- the two variants; both checked against the module with 0.8 of zirconia above it
+const LARGO = (() => {
+  const P = 0.36;
+  return {
+    key: 'largo', seam: 0.62, modX: 18.5, modZ: 36,
+    thick: t => 2.0 + (10.2 - 2.0) * ss((1.35 - Math.abs(t)) / (1.35 - P)),
+    width: t => 7 + (39 - 7) * ss((2.2 - Math.abs(t)) / (2.2 - 0.15)),
+    expo: t => N_ARM + (N_TOP - N_ARM) * ss((1.35 - Math.abs(t)) / (1.35 - P)),
+    mics: [[0, 15.35], [0, -15.35]], led: [0, -11.2], pads: [[-3.6, -14.5], [-1.2, -14.5], [1.2, -14.5], [3.6, -14.5]],
+    capX: 'Lo spessore sale da 2 mm sulle braccia a 10,2 sul dorso; il modulo (tratteggio) occupa solo la parte alta.',
+    capZ: 'Sul dorso il bracciale è largo 39 mm: il modulo da 36 ci sta dentro, con un microfono a ogni bordo.',
+  };
+})();
+const STRETTO = (() => {
+  const HTOP = 10.2, R = 200, WTOP = 22, TM = 0.68, T1 = 1.45, WT1 = 2.0;
+  const yc = CB + HTOP - R;
+  const top = t => {                       // along the normal, from the inner ellipse to a dome of radius 200
+    const [px, py, nx, ny] = frame(t);
+    const b = nx * px + ny * (py - yc), c = px * px + (py - yc) ** 2 - R * R;
+    return -b + Math.sqrt(b * b - c);
+  };
+  const hM = top(TM);
+  return {
+    key: 'stretto', seam: 1.0, modX: 36, modZ: 18.5,
+    thick: t => { const a = Math.abs(t); return a <= TM ? top(a) : 2.0 + (hM - 2.0) * ss((T1 - a) / (T1 - TM)); },
+    width: t => 7 + (WTOP - 7) * ss((WT1 - Math.abs(t)) / (WT1 - TM * 0.6)),
+    expo: t => N_ARM + (N_TOP - N_ARM) * ss((T1 - Math.abs(t)) / (T1 - TM)),
+    mics: [[15.35, 0], [-15.35, -5.5]], led: [-11.2, 6.2], pads: [[-14.5, -3.6], [-14.5, -1.2], [-14.5, 1.2], [-14.5, 3.6]],
+    capX: 'Il modulo è piatto e il polso curva: alle sue estremità il bracciale sale fino a 14,7 mm sul polso del modello. Il retro del modulo segue la curva del polso.',
+    capZ: 'Al centro il bracciale è largo 22 mm: il modulo, ora girato, ne occupa 18,5.',
+  };
+})();
+let V = LARGO;
+
+function section(th, w, M, nTop) {          // u along the normal (0 = skin side), v along the forearm
+  const pts = [];
+  for (let j = 0; j < M; j++) {
+    const a = (j / M) * Math.PI * 2;
+    const n = Math.cos(a) < 0 ? Math.max(nTop, 16 * (nTop - 2) / 4) : nTop;
+    pts.push([th / 2 + (th / 2) * spow(Math.cos(a), 2 / n), (w / 2) * spow(Math.sin(a), 2 / n)]);
+  }
+  return pts;
+}
+function outerAt(t, v) {
+  const th = V.thick(t), w = V.width(t), n = V.expo(t);
+  const k = 1 - Math.abs(2 * v / w) ** n;
+  return k <= 0 ? null : th / 2 + (th / 2) * k ** (1 / n);
+}
+
+// ---------- sections, drawn from the same functions
+const NS = 'http://www.w3.org/2000/svg';
+function el(svg, tag, attrs, text) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text) e.textContent = text; svg.appendChild(e); return e; }
+function drawSections() {
+  const sx = document.getElementById('secX'); sx.replaceChildren();
+  el(sx, 'ellipse', { cx: 0, cy: 0, rx: 29, ry: 20, fill: 'var(--skin)' });
+  el(sx, 'text', { class: 'lbl-m', x: -4, y: 1 }, 'polso');
+  const band = (t0, t1, fill) => {
+    const pts = [], N = 200;
+    for (let i = 0; i <= N; i++) { const t = t0 + (t1 - t0) * i / N; const [px, py, nx, ny] = frame(t); const h = V.thick(t) * tipScale(t); pts.push([px + nx * h, -(py + ny * h)]); }
+    for (let i = N; i >= 0; i--) { const t = t0 + (t1 - t0) * i / N; const [px, py] = frame(t); pts.push([px, -py]); }
+    el(sx, 'path', { d: 'M' + pts.map(p => p[0].toFixed(2) + ' ' + p[1].toFixed(2)).join(' L ') + ' Z', fill });
+  };
+  band(-V.seam, V.seam, 'var(--zr)');
+  band(V.seam + GAP, T_END, 'var(--ti)');
+  band(-T_END, -V.seam - GAP, 'var(--ti)');
+  el(sx, 'rect', { x: -V.modX / 2, y: -(CB + 8.5), width: V.modX, height: 8.5, rx: 1.5, class: 'mod' });
+  el(sx, 'path', { class: 'lead', d: `M 2 ${-(CB + V.thick(0)) - 0.3} L 6 -38` });
+  el(sx, 'text', { class: 'dimt', x: 4, y: -38.6 }, '10,2 al centro');
+  el(sx, 'path', { class: 'lead', d: 'M -7 -27 L -20 -38' });
+  el(sx, 'text', { class: 'lbl', x: -40, y: -38.6 }, 'modulo');
+  if (V.key === 'stretto') {
+    const [px, py, nx, ny] = frame(0.66), h = V.thick(0.66);
+    el(sx, 'path', { class: 'lead', d: `M ${px + nx * h} ${-(py + ny * h)} L 30 -30` });
+    el(sx, 'text', { class: 'dimt', x: 27, y: -30.6 }, '14,7 qui');
+    el(sx, 'rect', { x: 12, y: -(CB + 9.2), width: 6.5, height: 9.6, fill: 'none', stroke: 'var(--keepout)', 'stroke-width': 0.25, 'stroke-dasharray': '0.8 0.5' });
+    el(sx, 'text', { class: 'lbl', x: 10, y: -(CB + 10.4), style: 'fill: var(--keepout)' }, 'antenna');
+  }
+  const [ex] = frame(T_END);
+  el(sx, 'path', { class: 'dim', d: `M ${-ex + 0.6} 25 H ${ex - 0.6}` });
+  el(sx, 'text', { class: 'dimt', x: -8.5, y: 29 }, 'apertura circa 22');
+  const [qx, qy, qnx, qny] = frame(V.seam);
+  const [gx, gy] = V.key === 'stretto' ? [32, -26] : [34, -16];
+  el(sx, 'path', { class: 'lead', d: `M ${qx + qnx * 3} ${-(qy + qny * 3)} L ${gx} ${gy}` });
+  el(sx, 'text', { class: 'lbl', x: gx - 1, y: gy - 0.6 }, 'giunzione');
+  el(sx, 'path', { class: 'lead', d: 'M 29 12 L 31 22' });
+  el(sx, 'text', { class: 'lbl-m', x: 29, y: 24.5 }, 'titanio');
+  document.getElementById('capX').textContent = V.capX;
+
+  const sz = document.getElementById('secZ'); sz.replaceChildren();
+  el(sz, 'rect', { x: -28, y: 0, width: 56, height: 12, fill: 'var(--skin)' });
+  el(sz, 'text', { class: 'lbl-m', x: -26, y: 7 }, 'avambraccio');
+  el(sz, 'text', { class: 'lbl-m', x: 17, y: 7 }, 'mano →');
+  const pr = section(V.thick(0), V.width(0), 180, V.expo(0)).map(([u, v]) => `${v.toFixed(2)} ${(-u).toFixed(2)}`);
+  el(sz, 'path', { d: 'M' + pr.join(' L ') + ' Z', fill: 'var(--zr)' });
+  el(sz, 'rect', { x: -V.modZ / 2, y: -8.5, width: V.modZ, height: 8.5, rx: 1.5, class: 'mod' });
+  const hw = V.width(0) / 2;
+  el(sz, 'path', { class: 'dim', d: `M ${-hw} -12.5 V -15 M ${hw} -12.5 V -15 M ${-hw} -13.8 H ${hw}` });
+  el(sz, 'text', { class: 'dimt', x: -1.5, y: -14.6 }, String(Math.round(V.width(0))));
+  if (V.key === 'largo') {
+    for (const z of [-15.35, 15.35]) el(sz, 'circle', { cx: z, cy: -outerAt(0, z), r: 0.5, fill: 'var(--accent)' });
+    el(sz, 'path', { class: 'lead', d: `M -15.35 ${-outerAt(0, -15.35) - 0.6} L -18 -14` });
+    el(sz, 'text', { class: 'lbl', x: -27, y: -14.6 }, 'microfoni');
+    el(sz, 'rect', { x: 11, y: -10.4, width: 7, height: 10.4, fill: 'none', stroke: 'var(--keepout)', 'stroke-width': 0.25, 'stroke-dasharray': '0.8 0.5' });
+    el(sz, 'path', { class: 'lead', d: 'M 15 0 L 15 14' });
+    el(sz, 'text', { class: 'lbl', x: 1.5, y: 16.5, style: 'fill: var(--keepout)' }, 'antenna: solo ceramica');
+    el(sz, 'path', { class: 'lead', d: 'M -12 -0.2 L -16 14' });
+    el(sz, 'text', { class: 'lbl', x: -27, y: 16.5 }, 'pad del dock, lato pelle');
+  }
+  document.getElementById('capZ').textContent = V.capZ;
+}
+
+// ---------- 3D
+const stage = document.getElementById('stage');
+let renderer;
+try { renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true }); }
+catch (e) { stage.innerHTML = '<div class="err">Questo browser non mostra il WebGL: le sezioni qui sotto hanno le stesse misure.</div>'; drawSections(); throw e; }
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
+stage.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(renderer), 0.04).texture;
+const camera = new THREE.PerspectiveCamera(28, 16 / 9, 1, 2000);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true; controls.autoRotate = true; controls.autoRotateSpeed = 0.7;
+controls.minDistance = 50; controls.maxDistance = 400;
+const key = new THREE.DirectionalLight(0xffffff, 1.4); key.position.set(60, 120, 80); scene.add(key);
+const rim = new THREE.DirectionalLight(0xffffff, 1.0); rim.position.set(-90, 30, -70); scene.add(rim);
+
+const zirconia = new THREE.MeshPhysicalMaterial({ color: 0x0a0a0c, roughness: 0.3, clearcoat: 0.4, clearcoatRoughness: 0.25, envMapIntensity: 0.7 });
+const titanium = new THREE.MeshPhysicalMaterial({ color: 0x232428, metalness: 1, roughness: 0.34 });
+const polished = new THREE.MeshPhysicalMaterial({ color: 0x3a3b40, metalness: 1, roughness: 0.22, envMapIntensity: 0.6 });
+const skin = new THREE.MeshStandardMaterial({ color: 0xb9aea1, roughness: 0.9 });
+const hole = new THREE.MeshBasicMaterial({ color: 0x000000 });
+const led = new THREE.MeshStandardMaterial({ color: 0x300000, emissive: 0xff2a10, emissiveIntensity: 2.0 });
+const gold = new THREE.MeshPhysicalMaterial({ color: 0xc9a54a, metalness: 1, roughness: 0.3 });
+const modBack = new THREE.MeshPhysicalMaterial({ color: 0x141416, roughness: 0.6, side: THREE.DoubleSide });
+
+function buildBand(t0, t1, roundTip) {
+  const N = Math.max(40, Math.round(Math.abs(t1 - t0) * 260)), M = 96;
+  const pos = [], idx = [], rings = [];
+  for (let i = 0; i <= N; i++) {
+    const t = t0 + (t1 - t0) * i / N;
+    const [px, py, nx, ny] = frame(t);
+    const s = roundTip ? tipScale(t) : 1;
+    const th = V.thick(t) * s, w = V.width(t) * s;
+    const base = pos.length / 3; rings.push(base);
+    for (const [u, v] of section(th, w, M, V.expo(t))) {
+      const uu = roundTip ? (V.thick(t) / 2) + (u - th / 2) : u;
+      pos.push(px + nx * uu, py + ny * uu, v);
+    }
+  }
+  for (let i = 0; i < N; i++) for (let j = 0; j < M; j++) {
+    const a = rings[i] + j, b = rings[i] + (j + 1) % M, c = rings[i + 1] + j, d = rings[i + 1] + (j + 1) % M;
+    idx.push(a, b, c, b, d, c);
+  }
+  for (const [ri, flip] of [[0, false], [N, true]]) {
+    const base = rings[ri]; let cx = 0, cy = 0, cz = 0;
+    for (let j = 0; j < M; j++) { cx += pos[3 * (base + j)]; cy += pos[3 * (base + j) + 1]; cz += pos[3 * (base + j) + 2]; }
+    const ci = pos.length / 3; pos.push(cx / M, cy / M, cz / M);
+    for (let j = 0; j < M; j++) { const a = base + j, b = base + (j + 1) % M; flip ? idx.push(ci, a, b) : idx.push(ci, b, a); }
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.setIndex(idx); g.computeVertexNormals();
+  return g;
+}
+function onSurface(group, x, z, r, mat, h, inside) {
+  const t = Math.asin(x / CA);
+  const [px, py, nx, ny] = frame(t);
+  const u = inside ? -0.08 : outerAt(t, z) - h / 2 + 0.03;
+  const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, h, 40), mat);
+  m.position.set(px + nx * u, py + ny * u, z);
+  m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), new THREE.Vector3(nx, ny, 0));
+  group.add(m); return m;
+}
+function moduleBack(group) {                // the module's back follows the inner surface; four pads for the dock
+  const tm = Math.asin((V.modX / 2) / CA), NT = 40, NZ = 8, pos = [], idx = [];
+  for (let i = 0; i <= NT; i++) for (let j = 0; j <= NZ; j++) {
+    const t = -tm + 2 * tm * i / NT, z = -V.modZ / 2 + V.modZ * j / NZ;
+    const [px, py, nx, ny] = frame(t); pos.push(px - nx * 0.05, py - ny * 0.05, z);
+  }
+  for (let i = 0; i < NT; i++) for (let j = 0; j < NZ; j++) {
+    const a = i * (NZ + 1) + j, b = a + 1, c = a + NZ + 1, d = c + 1; idx.push(a, c, b, b, c, d);
+  }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setIndex(idx); g.computeVertexNormals();
+  group.add(new THREE.Mesh(g, modBack));
+  for (const [x, z] of V.pads) onSurface(group, x, z, 0.8, gold, 0.06, true);
+}
+let cuff = null;
+function buildCuff() {
+  if (cuff) { scene.remove(cuff); cuff.traverse(o => o.geometry && o.geometry.dispose()); }
+  cuff = new THREE.Group();
+  cuff.add(new THREE.Mesh(buildBand(-V.seam, V.seam, false), zirconia));
+  cuff.add(new THREE.Mesh(buildBand(V.seam + GAP, T_END, true), titanium));
+  cuff.add(new THREE.Mesh(buildBand(-T_END, -V.seam - GAP, true), titanium));
+  for (const [x, z] of V.mics) onSurface(cuff, x, z, 0.42, hole, 0.1);
+  onSurface(cuff, V.led[0], V.led[1], 0.5, led, 0.12);
+  onSurface(cuff, 0, 0, 2.0, polished, 0.14);
+  moduleBack(cuff);
+  scene.add(cuff);
+}
+
+const wrist = (() => {
+  const s = new THREE.Shape(); s.absellipse(0, 0, 27, 18, 0, Math.PI * 2);
+  const g = new THREE.ExtrudeGeometry(s, { depth: 130, bevelEnabled: true, bevelThickness: 3, bevelSize: 2, bevelSegments: 6, curveSegments: 96 });
+  g.translate(0, 0, -65);
+  const m = new THREE.Mesh(g, skin); m.visible = false; scene.add(m); return m;
+})();
+
+const views = {
+  hero: [[78, 62, 92], [0, 4, 0]],
+  top: [[0, 175, 0.01], [0, 10, 0]],
+  side: [[175, 30, 0], [0, 6, 0]],
+  end: [[0, 20, 175], [0, 4, 0]],
+  inside: [[0, -150, 40], [0, 6, 0]],
+};
+function setView(v) { camera.position.set(...views[v][0]); controls.target.set(...views[v][1]); controls.update(); }
+function resize() { const w = stage.clientWidth, h = stage.clientHeight; renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); }
+new ResizeObserver(resize).observe(stage); resize();
+
+const bWrist = document.getElementById('bWrist'), bSpin = document.getElementById('bSpin');
+const stopSpin = () => { controls.autoRotate = false; bSpin.setAttribute('aria-pressed', 'false'); };
+bWrist.onclick = () => { wrist.visible = !wrist.visible; bWrist.setAttribute('aria-pressed', wrist.visible); };
+bSpin.onclick = () => { controls.autoRotate = !controls.autoRotate; bSpin.setAttribute('aria-pressed', controls.autoRotate); };
+for (const [id, v] of [['bHero', 'hero'], ['bTop', 'top'], ['bSide', 'side'], ['bEnd', 'end'], ['bInside', 'inside']])
+  document.getElementById(id).onclick = () => { if (v !== 'hero') stopSpin(); setView(v); };
+function setVariant(v) {
+  V = v; buildCuff(); drawSections();
+  document.getElementById('vLargo').setAttribute('aria-pressed', v === LARGO);
+  document.getElementById('vStretto').setAttribute('aria-pressed', v === STRETTO);
+}
+document.getElementById('vLargo').onclick = () => setVariant(LARGO);
+document.getElementById('vStretto').onclick = () => setVariant(STRETTO);
+
+const q = new URLSearchParams(location.search);
+setVariant(q.get('v') === 'stretto' ? STRETTO : LARGO);
+setView('hero');
+if (q.has('still')) stopSpin();
+if (q.get('view') && views[q.get('view')]) setView(q.get('view'));
+if (q.has('wrist')) { wrist.visible = true; bWrist.setAttribute('aria-pressed', 'true'); }
+
+renderer.setAnimationLoop(() => { controls.update(); renderer.render(scene, camera); });
+</script>
+</body>
+</html>
