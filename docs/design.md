@@ -68,8 +68,8 @@ back pads --springs--TVS-- VBUS --> [ nPM1304 ] <--> cell (+ protection)
                         1.8 V buck --+  |  +-- load switch 2 --> flash supply
                                      |  +----- load switch 1 --> microphone supply --> glow
                                      v
-   button --+--> SHPHLD          [ nRF54L15 ] --PDM--> microphone A, microphone B
-            +-|<|-> wake            |  |  |
+   button -----> SHPHLD          [ nRF54L15 ] --PDM--> microphone A, microphone B
+                                    |  |  |
                                SPI --+  |  +-- matching -- tuning -- antenna
                                 v       +-- bright light
                           512 Mbit flash
@@ -88,7 +88,8 @@ One logic rail at 1.8 V, as on the ring: the microphones accept nothing higher.
 | Button | Panasonic EVP-BB, 1.6 N | 2.6 x 1.6 x 0.53 | Sealed to IP67; pressed through a flexible cap | datasheet from a distributor |
 | Light | Rohm SML-P11VT | 1.0 x 0.6 x 0.2 | Already on the ring | verified at 1 mA; dimmer is from curves |
 | Cell protection | ABLIC S-82A1A | 1.4 x 1.4 | Fitted only if the cell has none of its own | verified |
-| Charging input | Infineon ESD230-B1-W0201 | 0.58 x 0.28 | Exposed pads need ESD protection | verified |
+| Charging input, service pads | 3 x Infineon ESD230-B1-W0201 | 0.58 x 0.28 | Every pad on the outside of the pod needs ESD protection | verified |
+| Cell temperature | 10 k thermistor, B about 3380 K | 0402 | The charger stops outside the cell's temperature range, as on the ring and the card | part not chosen |
 | Cell | flat LiPo pouch, 401525 class | 25 x 15 x 4 | See the space budget | trade size code; capacity estimated |
 
 The full list with part numbers is `electrical/out/bom.csv`.
@@ -103,11 +104,27 @@ through vias can carry and an ordinary assembler can place. Resistors and capaci
 
 What this rests on: the two pin tables were read on 2026-11-23 from Nordic's product
 specifications as page text, once (`parts/pins`). The clock-capable pins come out the same
-as in the ring's table, which was checked ball by ball. The QFN48 reference schematic is a
-picture: its values and part numbers were read, where each one connects was not, so the
-supply filtering and the antenna matching follow the ring's circuit with the QFN values.
-Each such part says so in the bill of materials. Before a board is ordered, the tables and
-the reference circuit must be checked against Nordic's reference layout files.
+as in the ring's table, which was checked ball by ball.
+
+The circuit around both chips is Nordic's: the reference layouts nRF54L15-QFAA 0.8 and
+nPM1304-QEAA 1.0 (configuration 2, one buck, a load switch and an LED: this circuit) were
+opened as boards with KiCad's Altium importer on 2026-11-24, which gives the net of every
+part. Reading them corrected the first draft, which had followed the ring's chip-scale
+circuit where the QFN schematic was only a picture:
+
+| What | Draft | Nordic's reference, now on the board |
+| --- | --- | --- |
+| Reset pin | straight to its test pad | 1 k in series and 3.9 pF to ground at the pin, which sits next to the antenna pin |
+| DECA | 2.2 uF and 10 nF | also 2.2 nF |
+| End of the matching network | a shunt place left empty | 0.3 pF to ground |
+| Ferrite bead | value not given | 120 ohm at 100 MHz, 200 mA: Murata BLM03AG121SN1D, the ring's |
+| Unused BUCK2 output (VOUT2) | to ground | to VSYS |
+| Cell capacitor | 10 uF | 2.2 uF |
+| VSYS | one 10 uF | two: one at the buck's input, one at the output |
+
+The order of the matching parts, DECRF joined to DECA and the place of every other capacitor
+were as drafted. The one part kept different on purpose is the converter inductor: the
+reference takes a 0603 of 0.65 ohm, this board the ring's 0402 of 1.08 ohm at most.
 
 ### Microcontroller pins
 
@@ -118,8 +135,7 @@ the reference circuit must be checked against Nordic's reference layout files.
 | Microphone B threshold, wake | P1.09, P1.10 | port 1 can wake the chip |
 | Microphone power request | P1.13 | to the power chip's GPIO1, which drives load switch 1 |
 | Flash clock, out, in, select | P2.01, P2.02, P2.04, P2.05 | the dedicated fast-SPI pins |
-| Power chip clock, data, interrupt | P0.03, P0.02, P0.01 | clock on a clock pin; port 0 can wake the chip |
-| Button | P0.00 | port 0 can wake the chip |
+| Power chip clock, data, interrupt | P0.03, P0.02, P0.01 | clock on a clock pin; port 0 can wake the chip. The button arrives through this interrupt |
 | Bright light | P0.04 | |
 | Test serial port | P1.11, P1.12 | test pads on the board; this package has no P1.15 |
 | 32.768 kHz crystal | P1.00, P1.01 | fitted |
@@ -146,8 +162,20 @@ the reference circuit must be checked against Nordic's reference layout files.
   polarity to protect against. Two more pads carry SWDIO and SWDCLK: the pod can be
   reprogrammed closed. Bee's first model has a USB-C socket on its back instead; that
   needs no dock and gives up the seal.
-- **Button to two chips**, as on the ring: to the power chip's ship-mode input, and through
-  a diode to the microcontroller.
+- **Button to the power chip only**, as on the ring: to its ship-mode input, which pulls it
+  up towards the cell voltage. The microcontroller learns of a press, and of its release,
+  from the power chip's interrupt, and times the 2 s hold from the two. The first draft
+  also ran it through a diode to a microcontroller pin; the ring had already dropped that,
+  and so has this board. The cost is a few milliseconds per press, to be measured.
+- **A thermistor against the cell.** A 120 mAh pouch charged in a closed pod on a wrist:
+  the charger stops when the cell is too warm or too cold. The first draft disabled the
+  input instead.
+- **The microphone rail is emptied when it is switched off.** 470 k to ground, as on the
+  ring: when a mute opens the load switch, the rail falls in a fraction of a second and the
+  glow goes out with it, instead of fading or staying half on. It costs about 4 uA while
+  listening.
+- **Every outside pad is protected.** The charging pad and the two service pads touch skin
+  and fingers: each has a 5.5 V protection diode, as on the card.
 
 ## Pod and assembly
 
@@ -217,13 +245,18 @@ spacing rules and joins what the schematic joins. An autorouter knows nothing el
   anyone, and 0.15 mm for supplies is a choice the router could finish, not a calculation.
 - The router gives a different result on every run and with the ground layer closed to it
   finishes about one run in six; the script repeats it until KiCad is satisfied.
-- The QFN patterns are KiCad's stock ones. They have been compared with the package tables
-  in Nordic's specifications (a test keeps the comparison): pitch and pad width are the
-  nominal lead, each pad covers the longest lead and reaches 0.35 mm or more beyond the
-  body, and the centre lands are inside the range of the exposed pad (4.6 mm for 4.5 to
-  4.7; 3.45 mm for 3.4 to 3.6, nominal 3.5). Nordic prints no land pattern in the
-  specification: its own is in the layout files on nordicsemi.com, which have not been
-  opened, so paste openings and vias under the chips are still unchecked.
+- The QFN patterns are KiCad's stock ones, compared with Nordic's package tables (a test
+  keeps that comparison) and with the patterns in Nordic's reference layouts
+  (nRF54L15-QFAA 0.8, nPM1304-QEAA 1.0; the numbers are in `parts/pins`). Pin order, pitch
+  and the outer end of the pads agree. They differ in three ways, none changed here:
+  - Microcontroller: Nordic's pads are shorter towards the centre (0.65 mm against 0.8)
+    and its centre land larger (4.7 mm against 4.6), which leaves 0.35 mm between the two
+    where this board has 0.25.
+  - Power chip: Nordic's pads are wider (0.3 mm against 0.25) and its centre land is
+    3.5 mm against 3.45.
+  - Nordic puts through vias under both chips into the ground plane (16 and 9). This
+    board has none: the centre lands reach ground only through the top copper, and the
+    router ran tracks under the chips on the other layers.
 
 It is a board to look at and to measure the placement against, not one to order.
 
@@ -234,7 +267,7 @@ Courtyard checks are switched off: spacing is enforced by the placer instead.
 In [power-budget.md](power-budget.md). In short, on the 120 mAh cell: about six days on a
 typical day at the nominal figures, between two and fifteen across all the cases in the
 table. `mnemo-band` estimated 1.3 mA for the same day on the older chip; this budget says
-0.65 mA. The difference is the nRF54L15's lower active current, taken from the vendor and
+0.66 mA. The difference is the nRF54L15's lower active current, taken from the vendor and
 not yet from a bench, so the older figure is the one to plan on until then.
 
 ## Radio

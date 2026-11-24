@@ -7,14 +7,17 @@
 # Pin 49 is the exposed pad. This package has no P1.15. ck: clock-capable pin.
 status: secondary
 # Package table ("Table 2. Package dimensions in millimeters", QFN48 package page, read as text
-# on 2026-11-24): each entry is [min, nominal, max]. Nordic prints no land pattern there; the
-# recommended one is only in the layout files on nordicsemi.com, which have not been opened.
+# on 2026-11-24): each entry is [min, nominal, max]. Nordic prints no land pattern there.
+# nordic_land is the pattern in Nordic's reference layout (Altium board opened with KiCad's
+# importer on 2026-11-24): lead pads are ovals [width, length] centred lead_centre from the
+# middle, the centre land is square, with through vias under it.
 package:
   body: [6.0, 6.0, 0.85]
   pitch: 0.4
   lead: [0.2, 0.4]
   exposed_pad: [4.6, 4.6]
   limits: {body: [5.9, 6.0, 6.1], lead_width: [0.15, 0.2, 0.25], lead_length: [0.35, 0.4, 0.45], exposed_pad: [4.5, 4.6, 4.7], lead_to_pad: 0.3}
+  nordic_land: {file: 'nRF54L15-QFAA Reference Layout 0_8', lead: [0.2, 0.65], lead_centre: 3.025, centre: 4.7, vias: {count: 16, pitch: 1.2, drill: 0.33}}
 pins:
   1: {name: P1.00, type: io, alt: XL1}
   2: {name: P1.01, type: io, alt: XL2}

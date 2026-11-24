@@ -17,7 +17,8 @@ rows in mA straight from the cell.
 | Bluetooth link kept alive | 0.01 mA | 0.015 mA | 0.03 mA | estimate |
 | Power chip itself | 0.001 mA | 0.002 mA | 0.005 mA | estimate |
 | Steady glow, 0.03 / 0.05 / 0.1 mA | 0.03 mA | 0.05 mA | 0.1 mA | design choice |
-| **At the cell** (3.7 V, 85% conversion of the rail terms) | **1.33 mA** | **2.03 mA** | **3.37 mA** | |
+| Bleed resistor on the microphone rail, 470 k at 1.8 V | 0.0069 mW | 0.0069 mW | 0.0069 mW | calculated |
+| **At the cell** (3.7 V, 85% conversion of the rail terms) | **1.34 mA** | **2.03 mA** | **3.37 mA** | |
 
 ## In silence: waiting for sound
 
@@ -29,7 +30,8 @@ rows in mA straight from the cell.
 | Bluetooth link kept alive | 0.01 mA | 0.015 mA | 0.03 mA | estimate |
 | Power chip itself | 0.001 mA | 0.002 mA | 0.005 mA | estimate |
 | Steady glow, 0.03 / 0.05 / 0.1 mA | 0.03 mA | 0.05 mA | 0.1 mA | design choice |
-| **At the cell** (3.7 V, 85% conversion of the rail terms) | **0.05 mA** | **0.13 mA** | **0.22 mA** | |
+| Bleed resistor on the microphone rail, 470 k at 1.8 V | 0.0069 mW | 0.0069 mW | 0.0069 mW | calculated |
+| **At the cell** (3.7 V, 85% conversion of the rail terms) | **0.06 mA** | **0.13 mA** | **0.22 mA** | |
 
 ## Days between charges
 
@@ -39,15 +41,15 @@ the ones in the `mnemo-band` design document, not measurements of anybody's day.
 
 | Cell | Draw | quiet (15%) | typical (25%) | noisy (50%) |
 | --- | --- | --- | --- | --- |
-| 120 mAh (envelope A-slim) | low | 14.6 days | 9.5 days | 5.1 days |
-| 120 mAh (envelope A-slim) | nominal | 9.0 days | 6.1 days | 3.4 days |
+| 120 mAh (envelope A-slim) | low | 14.4 days | 9.4 days | 5.1 days |
+| 120 mAh (envelope A-slim) | nominal | 8.9 days | 6.1 days | 3.4 days |
 | 120 mAh (envelope A-slim) | high | 5.6 days | 3.8 days | 2.1 days |
-| 170 mAh (envelope B-roomy) | low | 20.6 days | 13.4 days | 7.2 days |
-| 170 mAh (envelope B-roomy) | nominal | 12.7 days | 8.7 days | 4.8 days |
+| 170 mAh (envelope B-roomy) | low | 20.5 days | 13.4 days | 7.2 days |
+| 170 mAh (envelope B-roomy) | nominal | 12.7 days | 8.6 days | 4.8 days |
 | 170 mAh (envelope B-roomy) | high | 7.9 days | 5.4 days | 3.0 days |
 
 The requirement is 2 days and the stretch goal 5. On the smaller cell the typical day
-at nominal draw averages 0.65 mA; the worst case in the table (noisy day, high draw) gives 2.1 days.
+at nominal draw averages 0.66 mA; the worst case in the table (noisy day, high draw) gives 2.1 days.
 The light takes 27% of the typical day: 0.05 mA of glow around the clock
 and 0.5 mA while recording.
 

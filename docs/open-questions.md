@@ -21,15 +21,14 @@ Each has a draft answer in the design, chosen so the scripts had something to ch
 | Item | Where to look |
 | --- | --- |
 | Flash: exact 512 Mbit 1.8 V part, package drawing, height, exposed pad, standby current | Winbond, and one alternative maker |
-| nPM1304: what to do with SW2, VOUT2, LED0-2, GPIO2-3 when unused; which capacitor on which net | Nordic's reference design files |
 | nPM1304 against nPM1300 for a cell this size: charge current range, quiescent current | Nordic |
 | nRF54L15 QFN48 and nPM1304 QFN32: pin tables read once as page text, to compare with the package figures | Nordic's product specifications |
-| nRF54L15 QFN48 reference circuit: which net each capacitor, the bead and the matching parts sit on; the 32 MHz crystal part | Nordic's reference layout files (the schematic on the site is a picture) |
+| The 32 MHz crystal: Nordic's reference asks 8 pF and 40 ppm in all, and names no part | Kyocera's drawing for the CX2016DB |
 | Land patterns for both QFN packages | Nordic's package drawings |
 | T5838: both microphones on one data line with separate threshold pins; behaviour of the sleeping one on the bus | TDK datasheet and application note |
 | Cell: a real part with drawing, capacity, protection board or not, tab position | quotes from two suppliers |
 | Spring contacts about 5 mm tall, or another way from the board to the back pads | distributor search |
-| N-MOSFETs for the light and the protection; 2.2 uH inductor | distributor search |
+| Thermistor part: 10 k, B about 3380 K, 0402 | distributor search |
 | nRF54L15 errata for P1.04-P1.10 at power-on | Nordic errata, revision in stock |
 | What Bee actually contains | a teardown or its radio approval file, if one appears |
 
@@ -54,5 +53,5 @@ Each has a draft answer in the design, chosen so the scripts had something to ch
 A review of the board by a person: antenna feed, supply and return paths, crystal, the layer stack with a fabricator; the two shells, their joint and
 seal; the button cap, the light pipe, the microphone gaskets and membranes; the strap and
 the clip; the dock; the antenna; firmware changes against `mnemo-band` (pins, power chip
-driver, two microphones, two light levels, 512 Mbit buffer); compliance (radio, lithium
+driver, the button through the power chip's interrupt, two microphones, two light levels, 512 Mbit buffer); compliance (radio, lithium
 cell); the law on recording other people, which differs by country.
