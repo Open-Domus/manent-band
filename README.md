@@ -5,6 +5,8 @@ speech around its wearer, records it, and hands it to the phone over Bluetooth L
 the always-listening sibling of the ring in `manent-ring`, in the form of Amazon's Bee.
 Firmware and radio protocol live in the `mnemo-band` repository.
 
+Public page: [manentlabs.it/en/band/](https://manentlabs.it/en/band/) (English), [manentlabs.it/banda/](https://manentlabs.it/banda/) (Italian).
+
 Nothing here has been built or measured. This is a first design on paper, checked by
 scripts, and several of its choices still wait for the project owner.
 
