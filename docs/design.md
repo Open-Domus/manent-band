@@ -217,8 +217,13 @@ spacing rules and joins what the schematic joins. An autorouter knows nothing el
   anyone, and 0.15 mm for supplies is a choice the router could finish, not a calculation.
 - The router gives a different result on every run and with the ground layer closed to it
   finishes about one run in six; the script repeats it until KiCad is satisfied.
-- The stock QFN patterns have not been compared with Nordic's drawings; the power chip's
-  exposed pad is 3.5 mm and the stock pattern used is 3.45.
+- The QFN patterns are KiCad's stock ones. They have been compared with the package tables
+  in Nordic's specifications (a test keeps the comparison): pitch and pad width are the
+  nominal lead, each pad covers the longest lead and reaches 0.35 mm or more beyond the
+  body, and the centre lands are inside the range of the exposed pad (4.6 mm for 4.5 to
+  4.7; 3.45 mm for 3.4 to 3.6, nominal 3.5). Nordic prints no land pattern in the
+  specification: its own is in the layout files on nordicsemi.com, which have not been
+  opened, so paste openings and vias under the chips are still unchecked.
 
 It is a board to look at and to measure the placement against, not one to order.
 

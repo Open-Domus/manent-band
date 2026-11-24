@@ -142,3 +142,34 @@ def test_radio_line_is_drawn_at_its_width():
 def test_supply_tracks_are_wide():
     from gen.board import POWER_NETS, POWER_WIDTH
     assert _share_at_width(POWER_NETS, POWER_WIDTH) > 0.9
+
+
+@pytest.mark.parametrize("pins, footprint", [
+    ("nrf54l15_qfn48", "QFN-48-1EP_6x6mm_P0.4mm_EP4.6x4.6mm"),
+    ("npm1304_qfn32", "QFN-32-1EP_5x5mm_P0.5mm_EP3.45x3.45mm"),
+])
+def test_qfn_land_pattern_fits_the_package_nordic_draws(pins, footprint):
+    # Nordic prints the package, not the land pattern, so this checks that the stock pattern
+    # suits the package: every lead lands on its pad at any tolerance, with solder beyond the
+    # body edge, and the centre land is within the range of the exposed pad.
+    import yaml
+    from gen import footprints
+    root = Path(__file__).resolve().parents[1]
+    pkg = yaml.safe_load((root / "parts" / "pins" / f"{pins}.yaml").read_text())["package"]
+    lim = pkg["limits"]
+    pads = footprints.pads_of(footprint)
+    centre = max(pads, key=lambda p: p[3] * p[4])
+    leads = [p for p in pads if p is not centre]
+    left = sorted((p for p in leads if p[1] == min(q[1] for q in leads)), key=lambda p: p[2])
+    assert len(leads) == 4 * len(left)
+    steps = {round(b[2] - a[2], 4) for a, b in zip(left, left[1:])}
+    assert steps == {pkg["pitch"]}
+    _, x, _, length, width = left[0]
+    inner, outer = abs(x) - length / 2, abs(x) + length / 2
+    assert lim["lead_width"][0] <= width <= lim["lead_width"][2]
+    assert pkg["pitch"] - width >= 0.2                         # room for solder mask between pads
+    assert inner <= lim["body"][1] / 2 - lim["lead_length"][2] + 1e-6   # the longest lead is covered
+    assert outer - lim["body"][2] / 2 >= 0.2                   # a fillet outside the largest body
+    assert lim["exposed_pad"][0] <= centre[3] <= lim["exposed_pad"][2]
+    assert centre[3] == centre[4]
+    assert inner - centre[3] / 2 >= 0.2                        # leads clear of the centre land

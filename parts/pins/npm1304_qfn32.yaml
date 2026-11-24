@@ -4,7 +4,15 @@
 # https://docs.nordicsemi.com/r/bundle/ps_npm1304/page/product_overview.html (Pin assignments)
 # Pin 33 is the exposed pad (AVSS). LSIN/LSOUT double as LDO input and output.
 status: secondary
-package: {body: [5.0, 5.0, 0.85], pitch: 0.5, lead: [0.25, 0.4], exposed_pad: [3.5, 3.5]}
+# Package table ("QFN32 dimensions in millimeters", mechanical specifications page, read as text
+# on 2026-11-24): each entry is [min, nominal, max]. Nordic prints no land pattern there; the
+# recommended one is only in the layout files on nordicsemi.com, which have not been opened.
+package:
+  body: [5.0, 5.0, 0.85]
+  pitch: 0.5
+  lead: [0.25, 0.4]
+  exposed_pad: [3.5, 3.5]
+  limits: {body: [4.9, 5.0, 5.1], lead_width: [0.2, 0.25, 0.3], lead_length: [0.3, 0.4, 0.45], exposed_pad: [3.4, 3.5, 3.6], lead_to_pad: 0.35}
 pins:
   1: {name: VOUT1}
   2: {name: PVSS1}

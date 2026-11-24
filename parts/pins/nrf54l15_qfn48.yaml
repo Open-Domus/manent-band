@@ -6,7 +6,15 @@
 # https://docs.nordicsemi.com/r/bundle/ps_nrf54l15/page/chapters/pin.html
 # Pin 49 is the exposed pad. This package has no P1.15. ck: clock-capable pin.
 status: secondary
-package: {body: [6.0, 6.0, 0.85], pitch: 0.4, lead: [0.2, 0.4], exposed_pad: [4.6, 4.6]}
+# Package table ("Table 2. Package dimensions in millimeters", QFN48 package page, read as text
+# on 2026-11-24): each entry is [min, nominal, max]. Nordic prints no land pattern there; the
+# recommended one is only in the layout files on nordicsemi.com, which have not been opened.
+package:
+  body: [6.0, 6.0, 0.85]
+  pitch: 0.4
+  lead: [0.2, 0.4]
+  exposed_pad: [4.6, 4.6]
+  limits: {body: [5.9, 6.0, 6.1], lead_width: [0.15, 0.2, 0.25], lead_length: [0.35, 0.4, 0.45], exposed_pad: [4.5, 4.6, 4.7], lead_to_pad: 0.3}
 pins:
   1: {name: P1.00, type: io, alt: XL1}
   2: {name: P1.01, type: io, alt: XL2}
