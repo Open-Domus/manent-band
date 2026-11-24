@@ -131,11 +131,11 @@ def layout(p: PodParams, parts=None) -> list[Placed]:
     # faces the antenna; the power chip has its input and cell pins towards the contacts.
     part("button", "button", "top", L / 2, W / 2)
     keep("button cap", "top", L / 2 - 2.5, W / 2 - 2.5, 5.0, 5.0)
-    part("microcontroller", "soc", "top", e + 6.8, 5.0, margin=FINE_PITCH_MARGIN, rot=180)
-    part("flash", "flash", "top", e + 6.8, W - 3.8)
+    part("microcontroller", "soc", "top", e + 7.4, 5.5, margin=FINE_PITCH_MARGIN, rot=180)
+    part("flash", "flash", "top", L - e - 6.7, W - 3.5)
     part("power chip", "pmic", "top", L - e - 6.2, 5.2, margin=FINE_PITCH_MARGIN)
     for i, name in enumerate(("nRESET", "UART TX", "UART RX", "1V8", "GND", "VBAT", "VBUS")):
-        part(f"test pad {name}", "testpad", "top", L / 2 - 0.7 + 1.5 * i, W - 1.0)
+        part(f"test pad {name}", "testpad", "top", e + 1.6 + 1.5 * i, W - 1.0)
     return out
 
 

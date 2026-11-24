@@ -51,7 +51,7 @@ Each has a draft answer in the design, chosen so the scripts had something to ch
 
 ## Not designed yet
 
-Board routing (parts are placed, no track is drawn) and a review of the placement; the two shells, their joint and
+A review of the board by a person: antenna feed, supply and return paths, crystal, the layer stack with a fabricator; the two shells, their joint and
 seal; the button cap, the light pipe, the microphone gaskets and membranes; the strap and
 the clip; the dock; the antenna; firmware changes against `mnemo-band` (pins, power chip
 driver, two microphones, two light levels, 512 Mbit buffer); compliance (radio, lithium

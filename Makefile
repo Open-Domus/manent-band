@@ -1,4 +1,4 @@
-.PHONY: all test fit cad drawings power schematic board clean
+.PHONY: all test fit cad drawings power schematic board route clean
 
 all: schematic board test fit drawings power cad
 
@@ -26,6 +26,11 @@ schematic:
 board:
 	uv run python -m electrical.gen.board
 	tools/kicad.sh board
+
+# Not part of `all`: needs Java and Freerouting (see tools/route.sh), takes minutes, and its
+# result differs a little from run to run.
+route:
+	tools/route.sh
 
 clean:
 	rm -f mechanical/out/*.step mechanical/out/*.svg mechanical/out/fit-report.json

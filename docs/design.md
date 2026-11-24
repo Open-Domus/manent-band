@@ -174,27 +174,53 @@ paper it already reaches the five days.
 
 `electrical/kicad/band.kicad_pcb`: four copper layers, 33.4 x 16.4 mm with rounded corners,
 seen from outside the wrist. Top copper faces outwards, bottom copper faces the cell, the
-first inner layer is a ground plane with none of it under the antenna corner.
+first inner layer is a ground plane. There is no ground under the antenna corner on any
+layer.
 
 What is done:
 
 - Every part of the schematic has a footprint and a place. The parts the pod decides
   (chips, microphones, button, light, antenna, contacts, test pads) are where the fit
   model puts them. The rest are placed by a script, each as near as it can get to the pads
-  it connects to, 0.25 mm between land patterns and 0.4 mm from the board edge.
-- Every pad carries its net. KiCad's check finds no difference between board and schematic
-  and no rule violation in the placement.
-- The rules in the project file are an ordinary fabricator's: 0.1 mm track and gap,
-  0.45 mm vias with a 0.2 mm hole. They are an assumption, not a quote.
+  it connects to: first the radio, crystal and converter parts, then the small decoupling
+  capacitors, then everything else. It keeps 0.35 mm between land patterns, 0.4 mm from
+  the board edge and 0.9 mm free around the two QFN chips (1.5 mm on the side of the microcontroller that faces the antenna).
+- Every connection is routed, by Freerouting, an open-source autorouter, and the result is
+  kept in `electrical/kicad/band.ses` so that `make board` rebuilds the same board.
+  `make route` draws the tracks again; it needs Java and the Freerouting jar, and it is
+  only needed when the placement changes.
+- The first inner layer carries ground and nothing else: the router is not allowed to use
+  it, so no signal cuts the plane. Signals run on the top, the bottom and the second inner
+  layer. Ground is also poured on both outer layers.
+- Supply tracks (battery, charger input, 1.8 V, the two switched rails, the converter
+  node) are 0.15 mm wide against 0.1 mm for signals. About 94 % of their length is at
+  that width; the rest is where they narrow to enter a chip pad.
+- The radio line from the chip through the matching parts to the antenna is 0.205 mm wide
+  over its whole length, on the top layer, with no ground poured beside it. That width
+  gives 50 ohm over the plane on an assumed stack: 0.10 mm of prepreg with a dielectric
+  constant of 4.1. The stack is an assumption until a fabricator states theirs.
+- There is no copper, track or via under the body of the switch.
+- KiCad's check finds no open connection, no rule violation and no difference between
+  board and schematic.
+- The rules in the project file are an ordinary fabricator's: 0.09 mm track and gap,
+  0.4 mm vias with a 0.2 mm hole, through vias only. They are an assumption, not a quote.
 - Footprints are in `electrical/kicad/band.pretty`: KiCad's stock patterns for the QFN,
   the flash, crystals and chip parts; the microphone, switch and protector as drawn for the
   ring; placeholders for the antenna, the spring contacts and the cell tabs.
 
-What is not done: **no track is routed.** All 165 connections are still open and the
-ground plane is not poured. The placement is a machine's first arrangement: nobody has
-looked at whether the supply loops, the crystal and the antenna feed are well laid out.
-The stock QFN patterns have not been compared with Nordic's drawings; the power chip's
-exposed pad is 3.5 mm and the stock pattern used is 3.45.
+What this board is not: reviewed. "Routed without violations" means the copper obeys the
+spacing rules and joins what the schematic joins. An autorouter knows nothing else:
+
+- The radio line has the right width but nobody chose its path: its bends, the pads of the
+  matching parts and the antenna itself (a placeholder) are not tuned.
+- The converter loops, the crystal tracks and the return paths were not laid out by
+  anyone, and 0.15 mm for supplies is a choice the router could finish, not a calculation.
+- The router gives a different result on every run and with the ground layer closed to it
+  finishes about one run in six; the script repeats it until KiCad is satisfied.
+- The stock QFN patterns have not been compared with Nordic's drawings; the power chip's
+  exposed pad is 3.5 mm and the stock pattern used is 3.45.
+
+It is a board to look at and to measure the placement against, not one to order.
 
 Courtyard checks are switched off: spacing is enforced by the placer instead.
 

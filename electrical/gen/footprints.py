@@ -109,6 +109,10 @@ PAD = re.compile(r'\(pad\s+"[^"]*"\s+\w+\s+\w+\s*\(at\s+([-\d.]+)\s+([-\d.]+)[^)
 FAB = re.compile(r'\(fp_rect\s*\(start\s+([-\d.]+)\s+([-\d.]+)\)\s*\(end\s+([-\d.]+)\s+([-\d.]+)\).*?\(layer\s+"([^"]+)"\)', re.S)
 
 
+# Bodies larger than their pads, for stock footprints whose outline is not a plain rectangle in the file.
+BODY = {"WSON-8-1EP_8x6mm_P1.27mm_EP3.4x4.3mm": (8.0, 6.0)}
+
+
 @lru_cache(maxsize=None)
 def extent(name: str) -> tuple[float, float]:
     """Width and height of the copper and body of a footprint in the library."""
@@ -123,7 +127,8 @@ def extent(name: str) -> tuple[float, float]:
             xs += [abs(float(x0)), abs(float(x1))]
             ys += [abs(float(y0)), abs(float(y1))]
     assert xs, name
-    return round(2 * max(xs), 3), round(2 * max(ys), 3)
+    bw, bh = BODY.get(name, (0.0, 0.0))
+    return max(round(2 * max(xs), 3), bw), max(round(2 * max(ys), 3), bh)
 
 
 def pads_of(name: str) -> list[tuple[str, float, float, float, float]]:
