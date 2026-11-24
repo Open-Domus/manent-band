@@ -36,7 +36,7 @@ are trade size codes with estimated capacities, not a supplier's drawing.
 - **Room for the cell**: 25.1 x 16.6 x 4.54 (thickness before swelling).
 - **Cell**: 401525, 25.0 x 15.0 x 4.0, about 120 mAh. Spare: 0.1 in length, 1.6 in width, 0.58 in height.
 - **Under the board**: 4.72 to the back wall, which is the height the spring contacts must span.
-- **Board**: 33.4 x 16.4, 547.8 mm2. Large parts and keep-outs take 192.7; the 52 small parts need 45.5, 13% of what is free.
+- **Board**: 33.4 x 16.4, 547.8 mm2. Large parts and keep-outs take 192.7; the 52 small parts need 45.7, 13% of what is free.
 - **Microphones**: 30.7 apart.
 - **Mass** (estimate): shell 2.46 g, board 1.11 g, cell 2.76 g, about 6.3 g without strap.
 - Drawings: [board from outside](../mechanical/out/plan-A.svg), [section](../mechanical/out/section-A.svg).
@@ -60,7 +60,7 @@ are trade size codes with estimated capacities, not a supplier's drawing.
 - **Room for the cell**: 27.1 x 19.6 x 5.46 (thickness before swelling).
 - **Cell**: 501725, 25.0 x 17.0 x 5.0, about 170 mAh. Spare: 2.1 in length, 2.6 in width, 0.5 in height.
 - **Under the board**: 5.8 to the back wall, which is the height the spring contacts must span.
-- **Board**: 35.4 x 19.4, 686.8 mm2. Large parts and keep-outs take 192.7; the 52 small parts need 45.5, 9% of what is free.
+- **Board**: 35.4 x 19.4, 686.8 mm2. Large parts and keep-outs take 192.7; the 52 small parts need 45.7, 9% of what is free.
 - **Microphones**: 33.0 apart.
 - **Mass** (estimate): shell 3.03 g, board 1.26 g, cell 3.91 g, about 8.2 g without strap.
 - Drawings: [board from outside](../mechanical/out/plan-B.svg), [section](../mechanical/out/section-B.svg).
